@@ -47,9 +47,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('nama_kegiatan');
+            $table->string('proposal')->nullable();
             $table->dateTime('tanggal_mulai');
             $table->dateTime('tanggal_selesai');
-            $table->enum('status_validasi', ['pending', 'valid', 'invalid'])->default('pending');
+            $table->enum('status_validasi', ['menunggu', 'divalidasi', 'ditolak'])->default('menunggu');
+            $table->enum('status_ttd', ['belum', 'proses', 'berhasil'])->default('belum');
+            $table->string('lembar_pengesahan')->nullable();
             $table->text('catatan_validasi')->nullable();
             $table->timestamps();
         });

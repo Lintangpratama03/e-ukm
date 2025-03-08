@@ -97,9 +97,9 @@
 
             <li class="side-nav-title side-nav-item">Layanan</li>
             <li class="side-nav-item">
-                <a href="apps-calendar.html" class="side-nav-link">
+                <a href="{{ route('user.jadwal.index') }}" class="side-nav-link">
                     <i class="uil-schedule"></i>
-                    <span> Kelola Jadwal </span>
+                    <span> Ajukan Jadwal </span>
                 </a>
             </li>
             <li class="side-nav-item">

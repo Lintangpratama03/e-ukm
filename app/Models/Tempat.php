@@ -11,4 +11,9 @@ class Tempat extends Model
 
     protected $table = 'tb_tempat';
     protected $fillable = ['nama_tempat', 'foto', 'deskripsi'];
+
+    public function jadwals()
+    {
+        return $this->belongsToMany(Jadwal::class, 'tb_jadwal_tempat', 'tempat_id', 'jadwal_id');
+    }
 }

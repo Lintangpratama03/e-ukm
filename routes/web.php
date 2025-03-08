@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Ukm\JadwalController;
 use App\Http\Controllers\Admin\KelolaAnggotaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\KelolaProfilController;
@@ -72,5 +73,16 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:user')->prefix('user')->name('user.')->group(function () {
         Route::get('/dashboard-ukm', [DashboardUkmController::class, 'index'])->name('dashboard.index');
+
+        Route::prefix('jadwal')->name('jadwal.')->group(function () {
+            Route::get('/', [JadwalController::class, 'index'])->name('index');
+            Route::get('/data', [JadwalController::class, 'getData'])->name('getData');
+            Route::post('/', [JadwalController::class, 'store'])->name('store');
+            Route::get('/{id}/edit', [JadwalController::class, 'edit'])->name('edit');
+            Route::get('/show/{id}', [JadwalController::class, 'show'])->name('show');
+            Route::put('/{id}', [JadwalController::class, 'update'])->name('update');
+            Route::delete('/{id}', [JadwalController::class, 'destroy'])->name('destroy');
+            Route::post('/upload/{id}', [JadwalController::class, 'uploadProposal'])->name('upload');
+        });
     });
 });
