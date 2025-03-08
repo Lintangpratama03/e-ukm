@@ -26,7 +26,7 @@
             </a>
         </li>
         <li class="side-nav-item">
-            <a href="apps-chat.html" class="side-nav-link">
+            <a href="{{ route('anggota.index') }}" class="side-nav-link">
                 <i class="uil-users-alt"></i>
                 <span> Kelola Anggota </span>
             </a>
@@ -34,7 +34,7 @@
 
         <li class="side-nav-title side-nav-item">Layanan</li>
         <li class="side-nav-item">
-            <a href="apps-chat.html" class="side-nav-link">
+            <a href="{{ route('admin.tempat.index') }}" class="side-nav-link">
                 <i class="uil-map-marker"></i>
                 <span> Kelola Tempat </span>
             </a>

@@ -46,7 +46,7 @@
                             <div class="col-md-6">
                                 <script>
                                     document.write(new Date().getFullYear())
-                                </script> © Huda Digantara
+                                </script> © Huda Dirgantara
                             </div>
                         </div>
                     </div>

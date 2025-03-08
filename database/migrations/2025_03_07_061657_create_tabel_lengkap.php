@@ -8,13 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        
+
         Schema::create('tb_anggota', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('nama');
             $table->string('nim')->nullable();
-            $table->string('jabatan');
+            $table->string('jabatan')->nullable();
+            $table->string('bidang')->nullable();
             $table->string('no_hp')->nullable();
             $table->string('jurusan')->nullable();
             $table->string('kelas')->nullable();
@@ -25,6 +26,7 @@ return new class extends Migration
         Schema::create('tb_tempat', function (Blueprint $table) {
             $table->id();
             $table->string('nama_tempat');
+            $table->string('foto')->nullable();
             $table->text('deskripsi')->nullable();
             $table->timestamps();
         });

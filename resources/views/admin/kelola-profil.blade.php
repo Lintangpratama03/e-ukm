@@ -121,10 +121,6 @@
                             </div>
                         </form>
                     </div>
-
-                    <div class="card-footer text-center text-muted">
-                        &copy; {{ date('Y') }} - Sistem Profil
-                    </div>
                 </div>
             </div>
 

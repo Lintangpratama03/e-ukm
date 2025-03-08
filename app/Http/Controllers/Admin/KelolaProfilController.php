@@ -35,7 +35,7 @@ class KelolaProfilController extends Controller
             'misi' => 'nullable|string',
             'deskripsi' => 'nullable|string',
             'kontak' => 'nullable|string|max:15',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg',
         ]);
 
         // Update User
