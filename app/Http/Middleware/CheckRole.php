@@ -17,7 +17,7 @@ class CheckRole
     public function handle(Request $request, Closure $next, string $role): Response
     {
         if (!Auth::check()) {
-            return redirect('login');
+            return redirect()->route('login');
         }
 
         $user = Auth::user();
@@ -25,12 +25,14 @@ class CheckRole
         if ($user->role == $role) {
             return $next($request);
         }
+
+        // Redirect berdasarkan role
         if ($user->role == 'admin') {
-            return redirect()->route('admin.profil.index');
+            return redirect()->route('admin.dashboard.index');
         }
 
         if ($user->role == 'user') {
-            return redirect()->route('dashboard');
+            return redirect()->route('user.dashboard.index');
         }
 
         return abort(403, 'Unauthorized action.');

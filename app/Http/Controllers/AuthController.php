@@ -57,15 +57,18 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
+            // Redirect berdasarkan role
+            $redirectUrl = ($user->role == 'user') ? route('user.dashboard.index') : route('admin.dashboard.index');
+
             if ($request->ajax()) {
                 return response()->json([
                     'success' => true,
                     'message' => 'Login berhasil!',
-                    'redirect' => route('dashboard')
+                    'redirect' => $redirectUrl
                 ]);
             }
 
-            return redirect()->intended('dashboard')->with('success', 'Login berhasil!');
+            return redirect()->intended($redirectUrl)->with('success', 'Login berhasil!');
         }
 
         if ($request->ajax()) {
@@ -79,6 +82,7 @@ class AuthController extends Controller
             'username' => 'The provided credentials do not match our records.',
         ])->onlyInput('username');
     }
+
 
     public function register(Request $request)
     {

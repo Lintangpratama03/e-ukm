@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\KelolaProfilController;
 use App\Http\Controllers\Admin\TempatController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
-
+use App\Http\Controllers\Ukm\DashboardUkmController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,7 +34,6 @@ Route::middleware('guest')->group(function () {
 
 // Authenticated Routes
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -51,6 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('anggota/delete/{id}', [KelolaAnggotaController::class, 'delete'])->name('anggota.delete');
 
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
         Route::prefix('tempat')->group(function () {
             Route::get('/', [TempatController::class, 'index'])->name('tempat.index');
             Route::get('/data', [TempatController::class, 'getData'])->name('tempat.getData');
@@ -71,8 +71,6 @@ Route::middleware('auth')->group(function () {
 
 
     Route::middleware('role:user')->prefix('user')->name('user.')->group(function () {
-        Route::get('dashboard', function () {
-            return view('user.dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard-ukm', [DashboardUkmController::class, 'index'])->name('dashboard.index');
     });
 });
