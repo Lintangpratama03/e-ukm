@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\KelolaProfilController;
 use App\Http\Controllers\AuthController;
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,7 +18,7 @@ use App\Http\Controllers\AuthController;
 */
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return redirect()->route('home');
 });
 
 // Authentication Routes (Public)
@@ -28,20 +31,23 @@ Route::middleware('guest')->group(function () {
 
 // Authenticated Routes
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::get('/profile/edit', [KelolaProfilController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/update', [KelolaProfilController::class, 'update'])->name('profile.update');
+    Route::post('/profile/update-password', [KelolaProfilController::class, 'updatePassword'])->name('profile.updatePassword');
+
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-        Route::get('profil', [KelolaProfilController::class, 'index'])->name('profil.index');
-        Route::get('profil/data', [KelolaProfilController::class, 'data'])->name('profil.data');
-        Route::post('profil/store', [KelolaProfilController::class, 'store'])->name('profil.store');
-        Route::get('profil/edit/{id}', [KelolaProfilController::class, 'edit'])->name('profil.edit');
-        Route::post('profil/update/{id}', [KelolaProfilController::class, 'update'])->name('profil.update');
-        Route::delete('profil/delete/{id}', [KelolaProfilController::class, 'destroy'])->name('profil.destroy');
+        Route::get('dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
     });
 
     Route::middleware('role:user')->prefix('user')->name('user.')->group(function () {
-        
+        Route::get('dashboard', function () {
+            return view('user.dashboard');
+        })->name('dashboard');
     });
 });

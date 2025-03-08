@@ -2,25 +2,28 @@
     <div class="container-fluid">
 
         <!-- LOGO -->
-        <a href="index.html" class="topnav-logo">
+        <a href="index.html" class="topnav-logo d-flex align-items-center">
             <span class="topnav-logo-lg">
-                <img src="assets/images/logo-light.png" alt="" height="16">
+                <img src="{{ asset('assets/images/logopolinema.png') }}" alt="Logo Polinema" height="60">
             </span>
-            <span class="topnav-logo-sm">
-                <img src="assets/images/logo_sm.png" alt="" height="16">
+            <span class="ms-2 fw-bold text-uppercase text-white">
+                UKM PSDKU POLINEMA KEDIRI
             </span>
         </a>
+
 
         <ul class="list-unstyled topbar-menu float-end mb-0">
             <li class="dropdown notification-list">
                 <a class="nav-link dropdown-toggle nav-user arrow-none me-0" data-bs-toggle="dropdown"
                     id="topbar-userdrop" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                     <span class="account-user-avatar">
-                        <img src="assets/images/users/avatar-1.jpg" alt="user-image" class="rounded-circle">
+                        <img src="{{ asset('storage/' . Auth::user()->profil->logo ?? 'assets/images/default-avatar.png') }}"
+                            alt="user-image" class="rounded-circle">
                     </span>
                     <span>
-                        <span class="account-user-name">Dominic Keller</span>
-                        <span class="account-position">Founder</span>
+                        <span class="account-user-name">{{ Auth::user()->profil->nama ?? '-' }}</span>
+                        <span class="account-position">{{ Auth::user()->role ?? '-' }}</span>
+
                     </span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated topbar-dropdown-menu profile-dropdown"

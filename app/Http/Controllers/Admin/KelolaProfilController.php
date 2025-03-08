@@ -3,118 +3,92 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Profil;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Yajra\DataTables\Facades\DataTables;
 
 class KelolaProfilController extends Controller
 {
-    public function index()
+    public function edit()
     {
-        return view('admin.kelola-profil');
+        $user = Auth::user();
+        $profil = Profil::where('user_id', $user->id)->firstOrFail();
+
+        return view('admin.kelola-profil', compact('user', 'profil'));
     }
 
-    public function data()
+    /**
+     * Update profil user dan profil tambahan.
+     */
+    public function update(Request $request)
     {
-        $data = DB::table('tb_profil')->latest()->get();
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->addColumn('logo', function ($row) {
-                if ($row->logo) {
-                    return '<img src="' . asset('storage/' . $row->logo) . '" width="50">';
-                }
-                return '-';
-            })
-            ->addColumn('aksi', function ($row) {
-                return '
-                    <button class="btn btn-sm btn-primary edit" data-id="' . $row->id . '">Edit</button>
-                    <button class="btn btn-sm btn-danger delete" data-id="' . $row->id . '">Hapus</button>
-                ';
-            })
-            ->rawColumns(['logo', 'aksi'])
-            ->make(true);
-    }
+        $user = Auth::user();
+        $profil = Profil::where('user_id', $user->id)->firstOrFail();
 
-    public function store(Request $request)
-    {
+        // Validasi Input
         $request->validate([
-            'nama' => 'required|string',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
             'visi' => 'nullable|string',
             'misi' => 'nullable|string',
             'deskripsi' => 'nullable|string',
-            'kontak' => 'nullable|string',
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'kontak' => 'nullable|string|max:15',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $logo = null;
-        if ($request->hasFile('logo')) {
-            $logo = $request->file('logo')->store('logo', 'public');
-        }
+        // Update User
+        $user->update([
+            'email' => $request->email,
+        ]);
 
-        DB::table('tb_profil')->insert([
-            'user_id' => auth()->id(),
-            'nama' => $request->nama,
+        // Update Profil
+        $profil->update([
+            'nama' => $request->name,
             'visi' => $request->visi,
             'misi' => $request->misi,
             'deskripsi' => $request->deskripsi,
             'kontak' => $request->kontak,
-            'logo' => $logo,
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
-        return response()->json(['success' => true, 'message' => 'Profil berhasil ditambahkan']);
-    }
-
-    public function edit($id)
-    {
-        $profil = DB::table('tb_profil')->where('id', $id)->first();
-        return response()->json($profil);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'nama' => 'required|string',
-            'visi' => 'nullable|string',
-            'misi' => 'nullable|string',
-            'deskripsi' => 'nullable|string',
-            'kontak' => 'nullable|string',
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
-
-        $profil = DB::table('tb_profil')->where('id', $id)->first();
-
-        $logo = $profil->logo;
+        // Update Logo jika ada file baru
         if ($request->hasFile('logo')) {
-            if ($logo) {
-                Storage::disk('public')->delete($logo);
+            // Hapus logo lama jika ada
+            if ($profil->logo) {
+                Storage::delete('public/' . $profil->logo);
             }
-            $logo = $request->file('logo')->store('logo', 'public');
+
+            // Simpan logo baru
+            $path = $request->file('logo')->store('profil', 'public');
+            $profil->update(['logo' => $path]);
         }
 
-        DB::table('tb_profil')->where('id', $id)->update([
-            'nama' => $request->nama,
-            'visi' => $request->visi,
-            'misi' => $request->misi,
-            'deskripsi' => $request->deskripsi,
-            'kontak' => $request->kontak,
-            'logo' => $logo,
-            'updated_at' => now(),
-        ]);
-
-        return response()->json(['success' => true, 'message' => 'Profil berhasil diperbarui']);
+        return redirect()->back()->with('success', 'Profil berhasil diperbarui!');
     }
 
-    public function destroy($id)
+    /**
+     * Update Password User
+     */
+    public function updatePassword(Request $request)
     {
-        $profil = DB::table('tb_profil')->where('id', $id)->first();
-        if ($profil->logo) {
-            Storage::disk('public')->delete($profil->logo);
-        }
-        DB::table('tb_profil')->where('id', $id)->delete();
+        $request->validate([
+            'password_lama' => 'required',
+            'password_baru' => 'required|min:6|confirmed',
+        ]);
 
-        return response()->json(['success' => true, 'message' => 'Profil berhasil dihapus']);
+        $user = Auth::user();
+
+        // Cek apakah password lama sesuai
+        if (!Hash::check($request->password_lama, $user->password)) {
+            return redirect()->back()->with('error', 'Password lama salah!');
+        }
+
+        // Update password baru
+        $user->update([
+            'password' => Hash::make($request->password_baru),
+        ]);
+
+        return redirect()->back()->with('success', 'Password berhasil diperbarui!');
     }
 }

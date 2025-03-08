@@ -2,191 +2,132 @@
 @section('title', 'Kelola Profil')
 
 @section('content')
-    <div class="row">
-        <div class="col-12">
-            <div class="page-title-box">
-                <div class="page-title-right">
-                    <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);"></a></li>
-                        <li class="breadcrumb-item active">Kelola Profil</li>
-                    </ol>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+
+            {{-- Sidebar Kiri (Ganti Password & Foto Profil) --}}
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        {{-- Foto Profil --}}
+                        <div class="mb-3">
+                            <img src="{{ asset('storage/' . $profil->logo) }}" alt="Foto Profil"
+                                class="img-thumbnail rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                        </div>
+
+                        {{-- Nama Profil --}}
+                        <h4 class="fw-bold mb-3">{{ old('nama', $profil->nama) }}</h4>
+
+                        {{-- Form Ganti Password --}}
+                        <form action="{{ route('profile.updatePassword') }}" method="POST">
+                            @csrf
+
+                            {{-- Password Lama --}}
+                            <div class="mb-3">
+                                <input type="password" class="form-control" name="password_lama" placeholder="Password Lama"
+                                    required>
+                            </div>
+
+                            {{-- Password Baru --}}
+                            <div class="mb-3">
+                                <input type="password" class="form-control" name="password_baru" placeholder="Password Baru"
+                                    required>
+                            </div>
+
+                            {{-- Konfirmasi Password --}}
+                            <div class="mb-3">
+                                <input type="password" class="form-control" name="password_konfirmasi"
+                                    placeholder="Konfirmasi Password" required>
+                            </div>
+
+                            {{-- Tombol Simpan Password --}}
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="fas fa-key"></i> Ubah Password
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+            {{-- Form Update Profil (Main Content) --}}
+            <div class="col-md-8">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h5>Update Profil</h5>
+                    </div>
+
+                    <div class="card-body">
+                        @if (session('success'))
+                            <div class="alert alert-success">{{ session('success') }}</div>
+                        @endif
+                        @if (session('error'))
+                            <div class="alert alert-danger">{{ session('error') }}</div>
+                        @endif
+
+                        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Nama Organisasi</label>
+                                        <input type="text" class="form-control" name="name"
+                                            value="{{ old('nama', $profil->nama) }}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Email</label>
+                                        <input type="email" class="form-control" name="email"
+                                            value="{{ old('email', $user->email) }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Visi</label>
+                                <textarea class="form-control" name="visi" rows="2">{{ old('visi', $profil->visi) }}</textarea>
+                            </div>
+
+                            {{-- Misi --}}
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Misi</label>
+                                <textarea class="form-control" name="misi" rows="2">{{ old('misi', $profil->misi) }}</textarea>
+                            </div>
+
+                            {{-- Deskripsi --}}
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Deskripsi</label>
+                                <textarea class="form-control" name="deskripsi" rows="3">{{ old('deskripsi', $profil->deskripsi) }}</textarea>
+                            </div>
+
+                            {{-- Kontak --}}
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Kontak</label>
+                                <input type="text" class="form-control" name="kontak"
+                                    value="{{ old('kontak', $profil->kontak) }}">
+                            </div>
+
+                            {{-- Upload Logo --}}
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Logo</label>
+                                <input type="file" class="form-control" name="logo" accept="image/*">
+                            </div>
+
+                            {{-- Tombol Simpan --}}
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-success px-4">
+                                    <i class="fas fa-save"></i> Simpan Perubahan
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card-footer text-center text-muted">
+                        &copy; {{ date('Y') }} - Sistem Profil
+                    </div>
                 </div>
             </div>
+
         </div>
     </div>
-    <div class="row">
-        <div class="col-12">
-            <button id="btn-tambah" class="btn btn-success mb-2">Tambah Profil</button>
-            <div class="card">
-                <div class="card-body">
-                    <table id="datatable" class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Logo</th>
-                                <th>Nama UKM</th>
-                                <th>Visi</th>
-                                <th>Misi</th>
-                                <th>Deskripsi</th>
-                                <th>Kontak</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Form -->
-    <div id="modal-form" class="modal fade">
-        <div class="modal-dialog">
-            <form id="form-profil" class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Form Profil</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    @csrf
-                    <input type="hidden" id="id">
-                    <div class="mb-3">
-                        <label>Nama UKM</label>
-                        <input type="text" class="form-control" id="nama_ukm" required>
-                    </div>
-                    <div class="mb-3">
-                        <label>Kontak</label>
-                        <input type="text" class="form-control" id="kontak">
-                    </div>
-                    <div class="mb-3">
-                        <label>Logo</label>
-                        <input type="file" class="form-control" id="logo">
-                    </div>
-                    <div class="mb-3">
-                        <label>Visi</label>
-                        <textarea class="form-control" id="visi"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label>Misi</label>
-                        <textarea class="form-control" id="misi"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label>Deskripsi</label>
-                        <textarea class="form-control" id="deskripsi"></textarea>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                </div>
-            </form>
-        </div>
-    </div>
-@endsection
-
-@section('script')
-    <script>
-        $(document).ready(function() {
-            var table = $('#datatable').DataTable({
-                ajax: "{{ route('admin.profil.data') }}",
-                columns: [{
-                        data: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'logo',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'nama'
-                    },
-                    {
-                        data: 'visi'
-                    },
-                    {
-                        data: 'misi'
-                    },
-                    {
-                        data: 'deskripsi'
-                    },
-                    {
-                        data: 'kontak'
-                    },
-                    {
-                        data: 'aksi',
-                        orderable: false,
-                        searchable: false
-                    },
-                ]
-
-            });
-
-            $('#btn-tambah').click(function() {
-                $('#form-profil')[0].reset();
-                $('#id').val('');
-                $('#modal-form').modal('show');
-            });
-
-            $('#datatable').on('click', '.edit', function() {
-                var id = $(this).data('id');
-                $.get("{{ url('admin/profil/edit') }}/" + id, function(res) {
-                    $('#id').val(res.id);
-                    $('#nama_ukm').val(res.nama_ukm);
-                    $('#kontak').val(res.kontak);
-                    $('#modal-form').modal('show');
-                });
-            });
-
-            $('#form-profil').submit(function(e) {
-                e.preventDefault();
-                var id = $('#id').val();
-                var url = id ? "{{ url('admin/profil/update') }}/" + id :
-                    "{{ route('admin.profil.store') }}";
-
-                var formData = new FormData();
-                formData.append('_token', $('input[name="_token"]').val());
-                formData.append('nama', $('#nama_ukm').val());
-                formData.append('visi', $('#visi').val());
-                formData.append('misi', $('#misi').val());
-                formData.append('deskripsi', $('#deskripsi').val());
-                formData.append('kontak', $('#kontak').val());
-                if ($('#logo')[0].files[0]) {
-                    formData.append('logo', $('#logo')[0].files[0]);
-                }
-
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(res) {
-                        $('#modal-form').modal('hide');
-                        table.ajax.reload();
-                        alert(res.message);
-                    }
-                });
-            });
-
-            $('#datatable').on('click', '.delete', function() {
-                if (confirm('Yakin hapus profil ini?')) {
-                    var id = $(this).data('id');
-                    $.ajax({
-                        url: "{{ url('admin/profil/delete') }}/" + id,
-                        type: 'DELETE',
-                        data: {
-                            _token: $('input[name="_token"]').val()
-                        },
-                        success: function(res) {
-                            table.ajax.reload();
-                            alert(res.message);
-                        }
-                    });
-                }
-            });
-        });
-    </script>
 @endsection
