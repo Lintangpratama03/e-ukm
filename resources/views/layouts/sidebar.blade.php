@@ -54,7 +54,7 @@
 
         <li class="side-nav-title side-nav-item">Akun</li>
         <li class="side-nav-item">
-            <a href="apps-chat.html" class="side-nav-link">
+            <a href="{{ route('admin.user.index') }}" class="side-nav-link">
                 <i class="uil-user"></i>
                 <span> Kelola Akun UKM </span>
             </a>

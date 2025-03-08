@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\KelolaAnggotaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\KelolaProfilController;
 use App\Http\Controllers\Admin\TempatController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 
 
@@ -50,13 +51,24 @@ Route::middleware('auth')->group(function () {
     Route::delete('anggota/delete/{id}', [KelolaAnggotaController::class, 'delete'])->name('anggota.delete');
 
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/tempat', [TempatController::class, 'index'])->name('tempat.index');
-        Route::get('/tempat/data', [TempatController::class, 'getData'])->name('tempat.getData');
-        Route::post('/tempat', [TempatController::class, 'store'])->name('tempat.store');
-        Route::get('/tempat/edit/{id}', [TempatController::class, 'edit'])->name('tempat.edit');
-        Route::post('/tempat/{id}', [TempatController::class, 'update'])->name('tempat.update');
-        Route::delete('/tempat/{id}', [TempatController::class, 'destroy'])->name('tempat.destroy');
+        Route::prefix('tempat')->group(function () {
+            Route::get('/', [TempatController::class, 'index'])->name('tempat.index');
+            Route::get('/data', [TempatController::class, 'getData'])->name('tempat.getData');
+            Route::post('/', [TempatController::class, 'store'])->name('tempat.store');
+            Route::get('/edit/{id}', [TempatController::class, 'edit'])->name('tempat.edit');
+            Route::post('/{id}', [TempatController::class, 'update'])->name('tempat.update');
+            Route::delete('/{id}', [TempatController::class, 'destroy'])->name('tempat.destroy');
+        });
+
+        Route::prefix('user')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('user.index');
+            Route::get('/getData', [UserController::class, 'getData'])->name('user.getData');
+            Route::post('/activate/{id}', [UserController::class, 'activate'])->name('user.activate');
+            Route::get('/detail/{id}', [UserController::class, 'detail'])->name('user.detail');
+            Route::delete('/{id}', [UserController::class, 'destroy'])->name('user.destroy');
+        });
     });
+
 
     Route::middleware('role:user')->prefix('user')->name('user.')->group(function () {
         Route::get('dashboard', function () {
