@@ -27,4 +27,8 @@ class Jadwal extends Model
     {
         return $this->belongsToMany(Tempat::class, 'tb_jadwal_tempat', 'jadwal_id', 'tempat_id');
     }
+    public function pengesahan()
+    {
+        return $this->belongsTo(TbLembarPengesahan::class, 'id', 'jadwal_id');
+    }
 }

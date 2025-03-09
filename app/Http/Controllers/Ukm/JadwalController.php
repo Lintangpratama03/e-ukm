@@ -49,7 +49,8 @@ class JadwalController extends Controller
     }
     public function show($id)
     {
-        $jadwal = Jadwal::with('tempats')->findOrFail($id);
+        $jadwal = Jadwal::with('tempats', 'pengesahan')->findOrFail($id);
+        // dd($jadwal);
         return view('admin.ukm.detail-jadwal', compact('jadwal'));
     }
 
@@ -135,7 +136,6 @@ class JadwalController extends Controller
 
     public function uploadProposal(Request $request, $id)
     {
-        // dd($request->all());
         $jadwal = Jadwal::findOrFail($id);
 
         $request->validate([
@@ -145,30 +145,49 @@ class JadwalController extends Controller
             'program' => 'required|string',
             'indikator_kerja' => 'required|string',
         ]);
+        $lembarPengesahan = TbLembarPengesahan::where('jadwal_id', $id)->first();
+        if ($lembarPengesahan && $jadwal->status_ttd === 'berhasil') {
+            return redirect()->back()->with('error', 'Dokumen tidak dapat diperbarui karena sudah berhasil ditandatangani.');
+        }
         if ($request->hasFile('proposal')) {
             if ($jadwal->proposal) {
                 Storage::disk('public')->delete($jadwal->proposal);
             }
             $jadwal->proposal = $request->file('proposal')->store('proposal', 'public');
         }
-        TbLembarPengesahan::create([
-            'jadwal_id' => $id,
-            'nama_kegiatan' => $request->nama_kegiatan,
-            'sasaran' => $request->sasaran,
-            'program' => $request->program,
-            'indikator_kerja' => $request->indikator_kerja,
-            'peserta' => $request->volume,
-            'tanggal_pelaksanaan' => $request->tanggal_pelaksanaan,
-            'jumlah_dana' => str_replace('.', '', $request->jumlah_dana),
-            'sumber_dana' => $request->sumber_dana,
-            'dpk' => $request->dpk,
-            'ketua_pelaksana' => $request->ketua_pelaksana,
-            'nim_ketua_pelaksana' => $request->nim_ketua_pelaksana,
-        ]);
+        if ($lembarPengesahan) {
+            $lembarPengesahan->update([
+                'nama_kegiatan' => $request->nama_kegiatan,
+                'sasaran' => $request->sasaran,
+                'program' => $request->program,
+                'indikator_kerja' => $request->indikator_kerja,
+                'peserta' => $request->volume,
+                'tanggal_pelaksanaan' => $request->tanggal_pelaksanaan,
+                'jumlah_dana' => str_replace('.', '', $request->jumlah_dana),
+                'dpk' => $request->dpk,
+                'ketua_pelaksana' => $request->ketua_pelaksana,
+                'nim_ketua_pelaksana' => $request->nim_ketua_pelaksana,
+            ]);
+        } else {
+            TbLembarPengesahan::create([
+                'jadwal_id' => $id,
+                'nama_kegiatan' => $request->nama_kegiatan,
+                'sasaran' => $request->sasaran,
+                'program' => $request->program,
+                'indikator_kerja' => $request->indikator_kerja,
+                'peserta' => $request->volume,
+                'tanggal_pelaksanaan' => $request->tanggal_pelaksanaan,
+                'jumlah_dana' => str_replace('.', '', $request->jumlah_dana),
+                'dpk' => $request->dpk,
+                'ketua_pelaksana' => $request->ketua_pelaksana,
+                'nim_ketua_pelaksana' => $request->nim_ketua_pelaksana,
+            ]);
+        }
         $jadwal->save();
 
-        return redirect()->back()->with('success', 'Dokumen berhasil diunggah.');
+        return redirect()->back()->with('success', 'Dokumen berhasil diunggah atau diperbarui.');
     }
+
     public function generatePdf($id)
     {
         $jadwal = Jadwal::with('tempats')->findOrFail($id);

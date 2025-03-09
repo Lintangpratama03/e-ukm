@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('peserta');
             $table->date('tanggal_pelaksanaan');
             $table->decimal('jumlah_dana', 15, 2);
-            $table->string('sumber_dana');
             $table->string('dpk');
             $table->string('ketua_pelaksana');
             $table->string('nim_ketua_pelaksana');

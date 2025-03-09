@@ -24,7 +24,7 @@
     <!-- App css -->
     <link href="{{ asset('assets') }}/css/icons.min.css" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets') }}/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="loading" data-layout-color="light" data-layout="detached" data-rightbar-onstart="true">
