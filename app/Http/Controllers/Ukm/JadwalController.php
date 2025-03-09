@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Jadwal;
 use App\Models\Tempat;
 use App\Models\JadwalTempat;
+use App\Models\TbLembarPengesahan;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Auth;
@@ -133,29 +135,58 @@ class JadwalController extends Controller
 
     public function uploadProposal(Request $request, $id)
     {
+        // dd($request->all());
         $jadwal = Jadwal::findOrFail($id);
 
         $request->validate([
-            'proposal' => 'nullable|file|mimes:pdf|max:2048',
-            'lembar_pengesahan' => 'nullable|file|mimes:pdf|max:2048'
+            'proposal' => 'nullable|file|mimes:pdf',
+            'nama_kegiatan' => 'required|string|max:255',
+            'sasaran' => 'required|string',
+            'program' => 'required|string',
+            'indikator_kerja' => 'required|string',
         ]);
-
         if ($request->hasFile('proposal')) {
             if ($jadwal->proposal) {
                 Storage::disk('public')->delete($jadwal->proposal);
             }
             $jadwal->proposal = $request->file('proposal')->store('proposal', 'public');
         }
-
-        if ($request->hasFile('lembar_pengesahan')) {
-            if ($jadwal->lembar_pengesahan) {
-                Storage::disk('public')->delete($jadwal->lembar_pengesahan);
-            }
-            $jadwal->lembar_pengesahan = $request->file('lembar_pengesahan')->store('lembar_pengesahan', 'public');
-        }
-
+        TbLembarPengesahan::create([
+            'jadwal_id' => $id,
+            'nama_kegiatan' => $request->nama_kegiatan,
+            'sasaran' => $request->sasaran,
+            'program' => $request->program,
+            'indikator_kerja' => $request->indikator_kerja,
+            'peserta' => $request->volume,
+            'tanggal_pelaksanaan' => $request->tanggal_pelaksanaan,
+            'jumlah_dana' => str_replace('.', '', $request->jumlah_dana),
+            'sumber_dana' => $request->sumber_dana,
+            'dpk' => $request->dpk,
+            'ketua_pelaksana' => $request->ketua_pelaksana,
+            'nim_ketua_pelaksana' => $request->nim_ketua_pelaksana,
+        ]);
         $jadwal->save();
 
         return redirect()->back()->with('success', 'Dokumen berhasil diunggah.');
+    }
+    public function generatePdf($id)
+    {
+        $jadwal = Jadwal::with('tempats')->findOrFail($id);
+        $lembarPengesahan = TbLembarPengesahan::where('jadwal_id', $id)->first();
+        if (!$lembarPengesahan) {
+            return redirect()->back()->with('error', 'Data lembar pengesahan tidak ditemukan.');
+        }
+        try {
+            $pdf = Pdf::loadView('admin.pengesahan.lembar_pengesahan', compact('jadwal', 'lembarPengesahan'));
+            $filename = 'lembar_pengesahan_' . $jadwal->id . '.pdf';
+            $path = 'lembar_pengesahan/' . $filename;
+            Storage::disk('public')->put($path, $pdf->output());
+            $jadwal->lembar_pengesahan = $path;
+            $jadwal->save();
+            return redirect()->back()->with('success', 'Lembar Pengesahan berhasil disimpan sebagai PDF.');
+        } catch (\Exception $e) {
+            dd($e);
+            return redirect()->back()->with('error', 'Gagal membuat PDF: ' . $e->getMessage());
+        }
     }
 }

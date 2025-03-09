@@ -83,6 +83,7 @@ Route::middleware('auth')->group(function () {
             Route::put('/{id}', [JadwalController::class, 'update'])->name('update');
             Route::delete('/{id}', [JadwalController::class, 'destroy'])->name('destroy');
             Route::post('/upload/{id}', [JadwalController::class, 'uploadProposal'])->name('upload');
+            Route::get('/jadwal/{id}/generate-pdf', [JadwalController::class, 'generatePdf'])->name('generate-pdf');
         });
     });
 });
