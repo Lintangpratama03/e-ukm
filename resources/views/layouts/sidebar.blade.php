@@ -39,7 +39,7 @@
                 </a>
             </li>
             <li class="side-nav-item">
-                <a href="apps-calendar.html" class="side-nav-link">
+                <a href="{{ route('admin.jadwal.index') }}" class="side-nav-link">
                     <i class="uil-schedule"></i>
                     <span> Kelola Jadwal </span>
                 </a>

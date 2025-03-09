@@ -53,11 +53,12 @@
                     <tr>
                         <th>Lembar Pengesahan</th>
                         <td>
-                            @if ($jadwal->status_ttd == 'berhasil')
-                                <a href="{{ asset('storage/' . $jadwal->lembar_pengesahan) }}" target="_blank"
-                                    class="btn btn-sm btn-info">
-                                    <i class="dripicons-preview"></i> Lihat Proposal
+                            <div class="text-center mt-3 mb-3">
+                                <a href="{{ route('user.jadwal.generate-pdf', $jadwal->id) }}" class="btn btn-primary">
+                                    <i class="mdi mdi-file-pdf"></i> Simpan Lembar Pengesahan sebagai PDF
                                 </a>
+                            </div>
+                            @if ($jadwal->status_ttd == 'berhasil')
                             @else
                                 <span class="text-muted">Belum diunggah</span>
                             @endif

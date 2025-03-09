@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Ukm\JadwalController;
 use App\Http\Controllers\Admin\KelolaAnggotaController;
+use App\Http\Controllers\Admin\KelolaJadwalController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\KelolaProfilController;
 use App\Http\Controllers\Admin\TempatController;
@@ -67,6 +68,17 @@ Route::middleware('auth')->group(function () {
             Route::post('/activate/{id}', [UserController::class, 'activate'])->name('user.activate');
             Route::get('/detail/{id}', [UserController::class, 'detail'])->name('user.detail');
             Route::delete('/{id}', [UserController::class, 'destroy'])->name('user.destroy');
+        });
+        Route::prefix('jadwal')->name('jadwal.')->group(function () {
+            Route::get('/', [KelolaJadwalController::class, 'index'])->name('index');
+            Route::get('/data', [KelolaJadwalController::class, 'getData'])->name('getData');
+            Route::post('/', [KelolaJadwalController::class, 'store'])->name('store');
+            Route::get('/{id}/edit', [KelolaJadwalController::class, 'edit'])->name('edit');
+            Route::get('/show/{id}', [KelolaJadwalController::class, 'show'])->name('show');
+            Route::put('/{id}', [KelolaJadwalController::class, 'update'])->name('update');
+            Route::delete('/{id}', [KelolaJadwalController::class, 'destroy'])->name('destroy');
+            Route::post('/upload/{id}', [KelolaJadwalController::class, 'uploadProposal'])->name('upload');
+            Route::get('/jadwal/{id}/generate-pdf', [KelolaJadwalController::class, 'generatePdf'])->name('generate-pdf');
         });
     });
 
