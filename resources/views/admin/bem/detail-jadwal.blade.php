@@ -2,13 +2,35 @@
 @section('title', 'Detail Jadwal')
 
 @section('content')
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: "{{ session('error') }}",
+                showConfirmButton: true
+            });
+        </script>
+    @endif
     <div class="container mt-4">
         <div class="card shadow">
             <div class="card-header">
                 <h5>Detail Jadwal</h5>
             </div>
             <div class="card-body">
-                <a href="{{ route('user.jadwal.index') }}" class="btn btn-sm btn-secondary">
+                <a href="{{ route('admin.jadwal.index') }}" class="btn btn-sm btn-secondary">
                     Kembali
                 </a>
                 <table class="table">
@@ -27,10 +49,19 @@
                     </tr>
                     <tr>
                         <th>Status Pengajuan</th>
-                        <td><span
-                                class="badge bg-{{ $jadwal->status_validasi == 'divalidasi' ? 'success' : 'warning' }}">{{ ucfirst($jadwal->status_validasi) }}</span>
+                        <td>
+                            <span class="badge bg-{{ $jadwal->status_validasi == 'divalidasi' ? 'success' : 'warning' }}">
+                                {{ ucfirst($jadwal->status_validasi) }}
+                            </span>
+                            @if ($jadwal->status_validasi == 'menunggu')
+                                <button class="btn btn-sm btn-primary ms-2" data-bs-toggle="modal"
+                                    data-bs-target="#validasiModal">
+                                    Validasi
+                                </button>
+                            @endif
                         </td>
                     </tr>
+
                     <tr>
                         <th>Status TTD</th>
                         <td><span
@@ -53,18 +84,48 @@
                     <tr>
                         <th>Lembar Pengesahan</th>
                         <td>
-                            <div class="text-center mt-3 mb-3">
-                                <a href="{{ route('user.jadwal.generate-pdf', $jadwal->id) }}" class="btn btn-primary">
-                                    <i class="mdi mdi-file-pdf"></i> Simpan Lembar Pengesahan sebagai PDF
+                            @if ($jadwal->status_ttd != 'belum')
+                                <a href="{{ route('admin.jadwal.generate-pdf', $jadwal->id) }}"
+                                    class="btn btn-sm btn-primary">
+                                    <i class="mdi mdi-file-pdf"></i> Buat Lembar Pengesahan
                                 </a>
-                            </div>
-                            @if ($jadwal->status_ttd == 'berhasil')
                             @else
-                                <span class="text-muted">Belum diunggah</span>
+                                <span class="text-muted">Belum bisa membuat lembar pengesahan</span>
                             @endif
                         </td>
                     </tr>
                 </table>
+                <!-- Modal Validasi -->
+                <div class="modal fade" id="validasiModal" tabindex="-1" aria-labelledby="validasiModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="validasiModalLabel">Validasi Pengajuan</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form id="validasiForm" method="POST"
+                                action="{{ route('admin.jadwal.validasi', $jadwal->id) }}">
+                                @csrf
+                                <div class="modal-body">
+                                    <label for="status_validasi" class="form-label">Status Validasi:</label>
+                                    <select name="status_validasi" id="status_validasi" class="form-select" required>
+                                        <option value="divalidasi">Divalidasi</option>
+                                        <option value="ditolak">Ditolak</option>
+                                    </select>
+
+                                    <label for="catatan_validasi" class="form-label mt-2">Catatan Validasi:</label>
+                                    <textarea name="catatan_validasi" id="catatan_validasi" class="form-control" rows="3" required></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
 
                 @if ($jadwal->status_validasi == 'divalidasi')
                     <div class="card">
@@ -74,7 +135,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <!-- Form Upload Proposal -->
-                                <form action="{{ route('user.jadwal.upload', $jadwal->id) }}" method="POST"
+                                <form action="{{ route('admin.jadwal.upload', $jadwal->id) }}" method="POST"
                                     enctype="multipart/form-data" class="w-100">
                                     @csrf
                                     <div class="row">
@@ -82,28 +143,32 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Nama Kegiatan</label>
-                                                <input type="text" name="nama_kegiatan" class="form-control" required>
+                                                <input type="text" name="nama_kegiatan" class="form-control" required
+                                                    value="{{ old('nama_kegiatan', $jadwal->pengesahan->nama_kegiatan ?? '-') }}">
                                             </div>
                                             <div class="form-group">
                                                 <label>Ketua Pelaksana</label>
-                                                <input type="text" name="ketua_pelaksana" class="form-control" required>
+                                                <input type="text" name="ketua_pelaksana" class="form-control" required
+                                                    value="{{ old('ketua_pelaksana', $jadwal->pengesahan->ketua_pelaksana ?? '-') }}">
                                             </div>
                                             <div class="form-group">
                                                 <label>Nim Ketua Pelaksana</label>
                                                 <input type="text" name="nim_ketua_pelaksana" class="form-control"
-                                                    required>
+                                                    required
+                                                    value="{{ old('nim_ketua_pelaksana', $jadwal->pengesahan->nim_ketua_pelaksana ?? '-') }}">
                                             </div>
                                             <div class="form-group">
                                                 <label>Sasaran</label>
-                                                <input type="text" name="sasaran" class="form-control" required>
+                                                <input type="text" name="sasaran" class="form-control" required
+                                                    value="{{ old('sasaran', $jadwal->pengesahan->sasaran ?? '-') }}">
                                             </div>
                                             <div class="form-group">
                                                 <label>Program</label>
-                                                <textarea name="program" class="form-control" required></textarea>
+                                                <textarea name="program" class="form-control" required>{{ old('program', $jadwal->pengesahan->program ?? '-') }}</textarea>
                                             </div>
                                             <div class="form-group">
                                                 <label>Indikator Kerja</label>
-                                                <textarea name="indikator_kerja" class="form-control" required></textarea>
+                                                <textarea name="indikator_kerja" class="form-control" required>{{ old('indikator_kerja', $jadwal->pengesahan->indikator_kerja ?? '-') }}</textarea>
                                             </div>
                                         </div>
 
@@ -111,28 +176,33 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Volume (Peserta)</label>
-                                                <input type="text" name="volume" class="form-control" required>
+                                                <input type="text" name="volume" class="form-control" required
+                                                    value="{{ old('volume', $jadwal->pengesahan->peserta ?? '-') }}">
                                             </div>
                                             <div class="form-group">
                                                 <label>Tanggal Pelaksanaan</label>
                                                 <input type="date" name="tanggal_pelaksanaan" class="form-control"
-                                                    required>
+                                                    required
+                                                    value="{{ old('tanggal_pelaksanaan', $jadwal->pengesahan->tanggal_pelaksanaan ?? '-') }}">
                                             </div>
                                             <div class="form-group">
                                                 <label>Jumlah Dana (Rp)</label>
                                                 <input type="text" name="jumlah_dana" class="form-control rupiah"
-                                                    required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Sumber Dana</label>
-                                                <input type="text" name="sumber_dana" class="form-control" required>
+                                                    required
+                                                    value="{{ old('jumlah_dana', $jadwal->pengesahan->jumlah_dana ?? '-') }}">
                                             </div>
                                             <div class="form-group">
                                                 <label>Dosen Pembimbing Kemahasiswaan</label>
                                                 <select name="dpk" class="form-control select2" required>
                                                     <option value="">Pilih DPK</option>
-                                                    <option value="dony">Dosen 1</option>
-                                                    <option value="ratna">Dosen 2</option>
+                                                    <option value="dony"
+                                                        {{ old('dpk', $jadwal->pengesahan->dpk ?? '-') == 'dony' ? 'selected' : '' }}>
+                                                        Ahmad Dony Mutiara Bahtiar, S.T., M.T.
+                                                    </option>
+                                                    <option value="ratna"
+                                                        {{ old('dpk', $jadwal->pengesahan->dpk ?? '-') == 'ratna' ? 'selected' : '' }}>
+                                                        Ratna Widyastuti. S.Pd., M.Pd
+                                                    </option>
                                                 </select>
                                             </div>
                                             <div class="form-group">
@@ -141,9 +211,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="text-center mt-3">
+                                    {{-- <div class="text-center mt-3">
                                         <button type="submit" class="btn btn-success">Simpan</button>
-                                    </div>
+                                    </div> --}}
                                 </form>
                             </div>
                         </div>

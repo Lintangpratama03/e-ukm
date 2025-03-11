@@ -182,6 +182,7 @@ class JadwalController extends Controller
                 'ketua_pelaksana' => $request->ketua_pelaksana,
                 'nim_ketua_pelaksana' => $request->nim_ketua_pelaksana,
             ]);
+            $jadwal->status_ttd = 'proses';
         }
         $jadwal->save();
 

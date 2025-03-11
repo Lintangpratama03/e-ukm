@@ -49,8 +49,23 @@ class KelolaJadwalController extends Controller
     }
     public function show($id)
     {
-        $jadwal = Jadwal::with('tempats')->findOrFail($id);
+        $jadwal = Jadwal::with('tempats', 'pengesahan')->findOrFail($id);
         return view('admin.bem.detail-jadwal', compact('jadwal'));
+    }
+    public function validasi(Request $request, $id)
+    {
+        $request->validate([
+            'status_validasi' => 'required|in:divalidasi,ditolak',
+            'catatan_validasi' => 'nullable|string|max:255',
+        ]);
+
+        $jadwal = Jadwal::findOrFail($id);
+        $jadwal->update([
+            'status_validasi' => $request->status_validasi,
+            'catatan_validasi' => $request->catatan_validasi,
+        ]);
+
+        return redirect()->back()->with('success', 'Status pengajuan berhasil diperbarui.');
     }
 
     public function store(Request $request)
@@ -180,6 +195,7 @@ class KelolaJadwalController extends Controller
             $path = 'lembar_pengesahan/' . $filename;
             Storage::disk('public')->put($path, $pdf->output());
             $jadwal->lembar_pengesahan = $path;
+            $jadwal->status_ttd = 'berhasil';
             $jadwal->save();
             return redirect()->back()->with('success', 'Lembar Pengesahan berhasil disimpan sebagai PDF.');
         } catch (\Exception $e) {

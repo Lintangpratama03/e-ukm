@@ -2,7 +2,7 @@
 @section('title', 'Detail Jadwal')
 
 @section('content')
-    
+
 
     @if (session('success'))
         <script>
@@ -106,31 +106,31 @@
                                             <div class="form-group">
                                                 <label>Nama Kegiatan</label>
                                                 <input type="text" name="nama_kegiatan" class="form-control" required
-                                                    value="{{ old('nama_kegiatan', $jadwal->pengesahan->nama_kegiatan) }}">
+                                                    value="{{ old('nama_kegiatan', $jadwal->pengesahan->nama_kegiatan ?? '-') }}">
                                             </div>
                                             <div class="form-group">
                                                 <label>Ketua Pelaksana</label>
                                                 <input type="text" name="ketua_pelaksana" class="form-control" required
-                                                    value="{{ old('ketua_pelaksana', $jadwal->pengesahan->ketua_pelaksana) }}">
+                                                    value="{{ old('ketua_pelaksana', $jadwal->pengesahan->ketua_pelaksana ?? '-') }}">
                                             </div>
                                             <div class="form-group">
                                                 <label>Nim Ketua Pelaksana</label>
                                                 <input type="text" name="nim_ketua_pelaksana" class="form-control"
                                                     required
-                                                    value="{{ old('nim_ketua_pelaksana', $jadwal->pengesahan->nim_ketua_pelaksana) }}">
+                                                    value="{{ old('nim_ketua_pelaksana', $jadwal->pengesahan->nim_ketua_pelaksana ?? '-') }}">
                                             </div>
                                             <div class="form-group">
                                                 <label>Sasaran</label>
                                                 <input type="text" name="sasaran" class="form-control" required
-                                                    value="{{ old('sasaran', $jadwal->pengesahan->sasaran) }}">
+                                                    value="{{ old('sasaran', $jadwal->pengesahan->sasaran ?? '-') }}">
                                             </div>
                                             <div class="form-group">
                                                 <label>Program</label>
-                                                <textarea name="program" class="form-control" required>{{ old('program', $jadwal->pengesahan->program) }}</textarea>
+                                                <textarea name="program" class="form-control" required>{{ old('program', $jadwal->pengesahan->program ?? '-') }}</textarea>
                                             </div>
                                             <div class="form-group">
                                                 <label>Indikator Kerja</label>
-                                                <textarea name="indikator_kerja" class="form-control" required>{{ old('indikator_kerja', $jadwal->pengesahan->indikator_kerja) }}</textarea>
+                                                <textarea name="indikator_kerja" class="form-control" required>{{ old('indikator_kerja', $jadwal->pengesahan->indikator_kerja ?? '-') }}</textarea>
                                             </div>
                                         </div>
 
@@ -139,30 +139,30 @@
                                             <div class="form-group">
                                                 <label>Volume (Peserta)</label>
                                                 <input type="text" name="volume" class="form-control" required
-                                                    value="{{ old('volume', $jadwal->pengesahan->peserta) }}">
+                                                    value="{{ old('volume', $jadwal->pengesahan->peserta ?? '-') }}">
                                             </div>
                                             <div class="form-group">
                                                 <label>Tanggal Pelaksanaan</label>
                                                 <input type="date" name="tanggal_pelaksanaan" class="form-control"
                                                     required
-                                                    value="{{ old('tanggal_pelaksanaan', $jadwal->pengesahan->tanggal_pelaksanaan) }}">
+                                                    value="{{ old('tanggal_pelaksanaan', $jadwal->pengesahan->tanggal_pelaksanaan ?? '-') }}">
                                             </div>
                                             <div class="form-group">
                                                 <label>Jumlah Dana (Rp)</label>
                                                 <input type="text" name="jumlah_dana" class="form-control rupiah"
                                                     required
-                                                    value="{{ old('jumlah_dana', $jadwal->pengesahan->jumlah_dana) }}">
+                                                    value="{{ old('jumlah_dana', $jadwal->pengesahan->jumlah_dana ?? '-') }}">
                                             </div>
                                             <div class="form-group">
                                                 <label>Dosen Pembimbing Kemahasiswaan</label>
                                                 <select name="dpk" class="form-control select2" required>
                                                     <option value="">Pilih DPK</option>
                                                     <option value="dony"
-                                                        {{ old('dpk', $jadwal->pengesahan->dpk) == 'dony' ? 'selected' : '' }}>
+                                                        {{ old('dpk', $jadwal->pengesahan->dpk ?? '-') == 'dony' ? 'selected' : '' }}>
                                                         Ahmad Dony Mutiara Bahtiar, S.T., M.T.
                                                     </option>
                                                     <option value="ratna"
-                                                        {{ old('dpk', $jadwal->pengesahan->dpk) == 'ratna' ? 'selected' : '' }}>
+                                                        {{ old('dpk', $jadwal->pengesahan->dpk ?? '-') == 'ratna' ? 'selected' : '' }}>
                                                         Ratna Widyastuti. S.Pd., M.Pd
                                                     </option>
                                                 </select>

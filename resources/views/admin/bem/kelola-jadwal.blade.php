@@ -28,8 +28,6 @@
         </div>
     </div>
 
-
-    {{-- Modal Tambah/Edit --}}
     <div class="modal fade" id="modal-jadwal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -82,7 +80,7 @@
         });
         $(document).ready(function() {
             $('.select2').select2({
-                theme: 'bootstrap4'
+                theme: 'bootstrap5'
             });
 
             let table = $('#table-jadwal').DataTable({

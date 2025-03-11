@@ -78,6 +78,7 @@ Route::middleware('auth')->group(function () {
             Route::put('/{id}', [KelolaJadwalController::class, 'update'])->name('update');
             Route::delete('/{id}', [KelolaJadwalController::class, 'destroy'])->name('destroy');
             Route::post('/upload/{id}', [KelolaJadwalController::class, 'uploadProposal'])->name('upload');
+            Route::post('/validasi/{id}', [KelolaJadwalController::class, 'validasi'])->name('validasi');
             Route::get('/jadwal/{id}/generate-pdf', [KelolaJadwalController::class, 'generatePdf'])->name('generate-pdf');
         });
     });
