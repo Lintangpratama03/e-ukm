@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\TempatController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Ukm\DashboardUkmController;
+use App\Http\Controllers\Ukm\DokumentasiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +51,14 @@ Route::middleware('auth')->group(function () {
     Route::get('anggota/edit/{id}', [KelolaAnggotaController::class, 'edit'])->name('anggota.edit');
     Route::post('anggota/update', [KelolaAnggotaController::class, 'update'])->name('anggota.update');
     Route::delete('anggota/delete/{id}', [KelolaAnggotaController::class, 'delete'])->name('anggota.delete');
+
+    Route::prefix('dokumentasi')->name('dokumentasi.')->group(function () {
+        Route::get('/', [DokumentasiController::class, 'index'])->name('index');
+        Route::get('/data', [DokumentasiController::class, 'getData'])->name('getData');
+        Route::get('/show/{id}', [DokumentasiController::class, 'show'])->name('show');
+        Route::post('/upload/{id}', [DokumentasiController::class, 'uploadFoto'])->name('upload');
+        Route::delete('/{id}', [DokumentasiController::class, 'destroy'])->name('destroy');
+    });
 
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');

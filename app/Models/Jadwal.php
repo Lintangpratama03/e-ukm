@@ -31,4 +31,8 @@ class Jadwal extends Model
     {
         return $this->belongsTo(TbLembarPengesahan::class, 'id', 'jadwal_id');
     }
+    public function dokumentasi()
+    {
+        return $this->hasMany(Dokumentasi::class, 'jadwal_id');
+    }
 }

@@ -45,7 +45,7 @@
                 </a>
             </li>
             <li class="side-nav-item">
-                <a href="apps-chat.html" class="side-nav-link">
+                <a href="{{ route('dokumentasi.index') }}" class="side-nav-link">
                     <i class="uil-file-alt"></i>
                     <span> Kelola Dokumentasi </span>
                 </a>
@@ -103,7 +103,7 @@
                 </a>
             </li>
             <li class="side-nav-item">
-                <a href="apps-chat.html" class="side-nav-link">
+                <a href="{{ route('dokumentasi.index') }}" class="side-nav-link">
                     <i class="uil-file-alt"></i>
                     <span> Kelola Dokumentasi </span>
                 </a>
