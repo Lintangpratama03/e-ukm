@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\KelolaAnggotaController;
 use App\Http\Controllers\Admin\KelolaJadwalController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\KelolaProfilController;
+use App\Http\Controllers\Admin\ParafController;
 use App\Http\Controllers\Admin\TempatController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
@@ -89,6 +90,10 @@ Route::middleware('auth')->group(function () {
             Route::post('/upload/{id}', [KelolaJadwalController::class, 'uploadProposal'])->name('upload');
             Route::post('/validasi/{id}', [KelolaJadwalController::class, 'validasi'])->name('validasi');
             Route::get('/jadwal/{id}/generate-pdf', [KelolaJadwalController::class, 'generatePdf'])->name('generate-pdf');
+        });
+        Route::prefix('bem')->name('bem.')->group(function () {
+            Route::get('/paraf-ketua', [ParafController::class, 'index'])->name('paraf.index');
+            Route::post('/paraf-ketua', [ParafController::class, 'store'])->name('paraf.store');
         });
     });
 

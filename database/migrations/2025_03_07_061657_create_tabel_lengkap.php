@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('jurusan')->nullable();
             $table->string('kelas')->nullable();
             $table->string('foto')->nullable();
+            $table->string('paraf')->nullable();
             $table->timestamps();
         });
 

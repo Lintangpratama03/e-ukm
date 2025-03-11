@@ -211,9 +211,29 @@
         <div class="right-sig">
             <div>Kediri, {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}</div>
             <div>Ketua Pelaksana,</div>
-            <div class="signature-name">{{ $lembarPengesahan->ketua_pelaksana }}</div>
+
+            <div class="signature-container">
+
+                <div class="signature-name">{{ $lembarPengesahan->ketua_pelaksana }} <img src="{{ $paraf }}"
+                        alt="Paraf Ketua" width="35"></div>
+            </div>
+
             <div>NIM. {{ $lembarPengesahan->nim_ketua_pelaksana }}</div>
         </div>
+        <style>
+            .signature-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                /* Memberikan jarak antara gambar dan nama */
+            }
+
+            .signature-image {
+                width: 50px;
+                /* Sesuaikan ukuran gambar */
+                height: auto;
+            }
+        </style>
     </div>
 
     <div class="approval">

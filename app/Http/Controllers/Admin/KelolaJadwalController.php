@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Anggota;
 use Illuminate\Http\Request;
 use App\Models\Jadwal;
 use App\Models\Tempat;
@@ -185,12 +186,20 @@ class KelolaJadwalController extends Controller
     public function generatePdf($id)
     {
         $jadwal = Jadwal::with('tempats')->findOrFail($id);
+        $paraf = Anggota::where('jabatan', 'ketua')
+            ->where('user_id', 1)
+            ->value('paraf');
+        if ($paraf) {
+            $paraf = public_path("storage/$paraf");
+        } else {
+            $paraf = null;
+        }
         $lembarPengesahan = TbLembarPengesahan::where('jadwal_id', $id)->first();
         if (!$lembarPengesahan) {
             return redirect()->back()->with('error', 'Data lembar pengesahan tidak ditemukan.');
         }
         try {
-            $pdf = Pdf::loadView('admin.pengesahan.lembar_pengesahan', compact('jadwal', 'lembarPengesahan'));
+            $pdf = Pdf::loadView('admin.pengesahan.lembar_pengesahan', compact('paraf', 'jadwal', 'lembarPengesahan'));
             $filename = 'lembar_pengesahan_' . $jadwal->id . '.pdf';
             $path = 'lembar_pengesahan/' . $filename;
             Storage::disk('public')->put($path, $pdf->output());

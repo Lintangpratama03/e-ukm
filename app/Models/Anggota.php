@@ -10,5 +10,5 @@ class Anggota extends Model
     use HasFactory;
 
     protected $table = 'tb_anggota';
-    protected $fillable = ['user_id', 'nama', 'nim', 'jabatan', 'no_hp', 'jurusan', 'kelas', 'foto'];
+    protected $fillable = ['user_id', 'nama', 'nim', 'jabatan', 'no_hp', 'jurusan', 'kelas', 'foto', 'paraf'];
 }

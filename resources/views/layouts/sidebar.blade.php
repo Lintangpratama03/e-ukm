@@ -30,6 +30,12 @@
                     <span> Kelola Anggota </span>
                 </a>
             </li>
+            <li class="side-nav-item">
+                <a href="{{ route('admin.bem.paraf.index') }}" class="side-nav-link">
+                    <i class="uil-pen"></i>
+                    <span> Paraf Ketua BEM </span>
+                </a>
+            </li>
 
             <li class="side-nav-title side-nav-item">Layanan</li>
             <li class="side-nav-item">
