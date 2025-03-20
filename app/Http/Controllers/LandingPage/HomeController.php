@@ -25,7 +25,7 @@ class HomeController extends Controller
         $kegiatanHariIni = Jadwal::where('status_validasi', 'divalidasi')
             ->where('created_at', $hariIni)
             ->count();
-        $events = Jadwal::with('tempats', 'ukm')->get();
+        $events = Jadwal::with('tempats', 'ukm')->where('status_validasi', 'divalidasi')->get();
         $ukmProfiles = Profil::all();
         return view('landing-page.home', compact(
             'kegiatanHariIni',
