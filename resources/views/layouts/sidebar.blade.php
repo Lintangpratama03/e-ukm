@@ -16,6 +16,12 @@
                     <span> Dashboard </span>
                 </a>
             </li>
+            <li class="side-nav-item">
+                <a href="{{ route('home') }}" class="side-nav-link">
+                    <i class="uil-dashboard"></i>
+                    <span> Landing Page </span>
+                </a>
+            </li>
 
             <li class="side-nav-title side-nav-item">Profil</li>
             <li class="side-nav-item">
@@ -86,7 +92,12 @@
                     <span> Dashboard </span>
                 </a>
             </li>
-
+            <li class="side-nav-item">
+                <a href="{{ route('home') }}" class="side-nav-link">
+                    <i class="uil-dashboard"></i>
+                    <span> Landing Page </span>
+                </a>
+            </li>
             <li class="side-nav-title side-nav-item">Profil</li>
             <li class="side-nav-item">
                 <a href="{{ route('profile.edit') }}" class="side-nav-link">

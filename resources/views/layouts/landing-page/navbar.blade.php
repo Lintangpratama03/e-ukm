@@ -211,10 +211,23 @@
                         Jadwal Kegiatan
                     </a>
                 </li>
-                <li class="nav-item my-auto ms-3 ms-lg-0">
-                    <a href="https://www.creative-tim.com/product/material-kit-pro"
-                        class="btn  bg-gradient-dark  mb-0 mt-2 mt-md-0">Login</a>
-                </li>
+                @if (Auth::check())
+                    @if (Auth::user()->role == 'admin')
+                        <li class="nav-item my-auto ms-3 ms-lg-0">
+                            <a href="{{ route('admin.dashboard.index') }}"
+                                class="btn bg-gradient-dark mb-0 mt-2 mt-md-0">Dashboard</a>
+                        </li>
+                    @elseif (Auth::user()->role == 'user')
+                        <li class="nav-item my-auto ms-3 ms-lg-0">
+                            <a href="{{ route('user.dashboard.index') }}"
+                                class="btn bg-gradient-dark mb-0 mt-2 mt-md-0">Dashboard</a>
+                        </li>
+                    @endif
+                @else
+                    <li class="nav-item my-auto ms-3 ms-lg-0">
+                        <a href="{{ route('login') }}" class="btn bg-gradient-dark mb-0 mt-2 mt-md-0">Login</a>
+                    </li>
+                @endif
             </ul>
         </div>
     </div>
