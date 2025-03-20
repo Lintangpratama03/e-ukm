@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ParafController;
 use App\Http\Controllers\Admin\TempatController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LandingPage\HomeController;
 use App\Http\Controllers\Ukm\DashboardUkmController;
 use App\Http\Controllers\Ukm\DokumentasiController;
 
@@ -24,9 +25,8 @@ use App\Http\Controllers\Ukm\DokumentasiController;
 |
 */
 
-Route::get('/', function () {
-    return redirect()->route('home');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/events', [HomeController::class, 'getEvents'])->name('events');
 
 // Authentication Routes (Public)
 Route::middleware('guest')->group(function () {

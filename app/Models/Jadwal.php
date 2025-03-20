@@ -35,4 +35,8 @@ class Jadwal extends Model
     {
         return $this->hasMany(Dokumentasi::class, 'jadwal_id');
     }
+    public function ukm()
+    {
+        return $this->belongsTo(Profil::class, 'user_id', 'user_id');
+    }
 }
