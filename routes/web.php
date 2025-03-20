@@ -63,6 +63,10 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+        Route::get('/ukm-activity-data', [DashboardController::class, 'getUkmActivityData'])->name('ukm-activity-data');
+        Route::get('/ukm-datatable', [DashboardController::class, 'getUkmDataTable'])->name('ukm-datatable');
+        Route::get('/ukm-kegiatan-detail', [DashboardController::class, 'getDetailKegiatan'])->name('ukm-kegiatan-detail');
+
         Route::prefix('tempat')->group(function () {
             Route::get('/', [TempatController::class, 'index'])->name('tempat.index');
             Route::get('/data', [TempatController::class, 'getData'])->name('tempat.getData');

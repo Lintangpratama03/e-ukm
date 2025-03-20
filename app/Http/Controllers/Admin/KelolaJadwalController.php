@@ -74,7 +74,7 @@ class KelolaJadwalController extends Controller
         $request->validate([
             'nama_kegiatan' => 'required|string|max:255',
             'tanggal_mulai' => 'required|date',
-            'tanggal_selesai' => 'required|date|after:tanggal_mulai',
+            'tanggal_selesai' => 'required|date',
             'tempat_id' => 'required|array',
         ]);
         $jadwalBentrok = Jadwal::whereHas('tempats', function ($query) use ($request) {
