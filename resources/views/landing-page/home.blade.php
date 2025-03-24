@@ -66,7 +66,7 @@
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="mb-0">Daftar Kegiatan</h4>
+                                <h4 class="mb-0">Daftar Kegiatan Yang Akan Datang</h4>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -139,7 +139,7 @@
                                                             alt="{{ $profile->nama }}">
                                                     @else
                                                         <img class="w-100 border-radius-md shadow-lg"
-                                                            src="{{ asset('assets/img/default-ukm.jpg') }}"
+                                                            src="{{ asset('assets/images/logopolinema.png') }}"
                                                             alt="default image">
                                                     @endif
                                                 </div>
@@ -170,12 +170,12 @@
     <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
+                <div class="modal-header bg-secondary text-white">
                     <h5 class="modal-title" id="eventModalLabel">Detail Kegiatan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <h4 id="modalTitle" class="text-primary"></h4>
+                    <h4 id="modalTitle" class="text-secondary"></h4>
                     <hr>
                     <div class="row">
                         <div class="col-md-6">
@@ -197,13 +197,16 @@
 @section('script')
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Initialize DataTables
             $('#eventsTable').DataTable({
                 responsive: true,
-                pageLength: 5
+                pageLength: 5,
+                drawCallback: function() {
+                    $('.dataTables_paginate .pagination').removeClass('pagination-primary').addClass(
+                        'pagination-secondary');
+                }
             });
 
-            // CountUp animation for statistics
+
             function startCountUp(elementId) {
                 let element = document.getElementById(elementId);
                 if (element) {

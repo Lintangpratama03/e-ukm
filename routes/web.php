@@ -28,6 +28,11 @@ use App\Http\Controllers\Ukm\DokumentasiController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/events', [HomeController::class, 'getEvents'])->name('events');
 
+Route::prefix('home')->name('home.')->group(function () {
+    Route::get('/ukm/profil/{id}', [HomeController::class, 'profilUkm'])->name('profil-ukm');
+    Route::get('/jadwal', [HomeController::class, 'jadwal'])->name('jadwal');
+    Route::get('/eventsUkm/{id}', [HomeController::class, 'getUkmEvents'])->name('getUkmEvents');
+});
 // Authentication Routes (Public)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginRegister'])->name('login');

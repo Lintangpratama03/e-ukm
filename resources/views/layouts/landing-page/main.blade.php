@@ -18,8 +18,31 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link id="pagestyle" href="{{ asset('landing-page/assets/css/material-kit.css?v=3.1.0') }}" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap5.min.css">
+    <!-- Updated DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.1/css/responsive.bootstrap5.min.css">
+    <style>
+        /* Ubah warna tombol pagination */
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            background-color: #6c757d !important;
+            /* Warna secondary Bootstrap */
+            color: #fff !important;
+            border: 1px solid #6c757d !important;
+        }
+
+        /* Saat tombol aktif (dipilih) */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background-color: #5a6268 !important;
+            /* Warna lebih gelap untuk efek aktif */
+            border-color: #545b62 !important;
+        }
+
+        /* Saat tombol dihover */
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background-color: #5a6268 !important;
+            color: #fff !important;
+        }
+    </style>
 </head>
 
 <body class="index-page bg-gray-200">
@@ -32,27 +55,23 @@
     </div>
     <header class="header-2">
         <div class="page-header min-vh-75 relative"
-            style="background-image: url('{{ asset('landing-page/assets/img/bg-landing.JPG') }}')" ">
+            style="background-image: url('{{ asset('landing-page/assets/img/bg-landing.JPG') }}')">
             <span class="mask bg-gradient-dark opacity-4"></span>
             <div class="container">
                 <div class="row">
                     <div class="col-lg-7 text-center mx-auto">
-                        <h1 class="text-white font-weight-black pt-3 mt-n5">UKM POLINEMA KEDIRI</h1>
-                        <p class="lead text-white mt-3" style="font-size: 0.8rem !important;">Unit Kegiatan Mahasiswa
-                            atau
-                            dikenal
-                            dengan UKM, Unit Kegiatan
-                            Mahasiswa (UKM) adalah salah satu unsur yang tak terpisahkan dari kehidupan mahasiswa di
-                            perguruan tinggi. UKM merupakan organisasi atau kelompok kecil yang terdiri dari mahasiswa
-                            dengan minat dan tujuan bersama dalam bidang tertentu, seperti olahraga, seni,
-                            kewirausahaan, atau sosial.</p>
+                        <h1 class="text-white font-weight-black pt-3 mt-n5">{{ $headerTitle ?? 'UKM POLINEMA KEDIRI' }}
+                        </h1>
+                        <p class="lead text-white mt-3" style="font-size: 0.8rem !important;">
+                            {{ $headerDescription ?? 'Unit Kegiatan Mahasiswa atau dikenal dengan UKM, Unit Kegiatan Mahasiswa (UKM) adalah salah satu unsur yang tak terpisahkan dari kehidupan mahasiswa di perguruan tinggi. UKM merupakan organisasi atau kelompok kecil yang terdiri dari mahasiswa dengan minat dan tujuan bersama dalam bidang tertentu, seperti olahraga, seni, kewirausahaan, atau sosial.' }}
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
-        @yield('content')
+    @yield('content')
 
 
     <footer class="footer pt-5">
@@ -68,13 +87,13 @@
             </div>
         </div>
     </footer>
-     <!-- Include DataTables CSS and JS -->
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
-     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
-     <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>
- 
+    <!-- Updated DataTables JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.2/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/3.0.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/3.0.1/js/responsive.bootstrap5.min.js"></script>
+
     <!--   Core JS Files   -->
     <script src="{{ asset('landing-page/assets/js/core/popper.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('landing-page/assets/js/core/bootstrap.min.js') }}" type="text/javascript"></script>
@@ -99,7 +118,7 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDTTfWur0PDbZWPr7Pmq8K3jiDp0_xUziI"></script>
     <script src="{{ asset('landing-page/assets/js/material-kit.min.js?v=3.1.0') }}" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.0.7/countUp.min.js"></script>
-    
+
     <script src="{{ asset('assets') }}/js/vendor/fullcalendar.min.js"></script>
     @yield('script')
 </body>

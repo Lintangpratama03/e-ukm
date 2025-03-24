@@ -5,9 +5,9 @@
 =========================================================
 
 * Product Page: https://www.creative-tim.com/product/soft-ui-design-system
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
+* Copyright 2021 Huda Dirgantara (https://www.creative-tim.com)
 
-* Coded by Creative Tim
+* Coded by Huda Dirgantara
 
 =========================================================
 

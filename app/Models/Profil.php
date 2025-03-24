@@ -38,4 +38,8 @@ class Profil extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+    public function jadwal()
+    {
+        return $this->hasMany(Jadwal::class, 'user_id', 'user_id');
+    }
 }

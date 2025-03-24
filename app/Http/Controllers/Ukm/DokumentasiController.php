@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Str;
 
 class DokumentasiController extends Controller
 {
@@ -68,7 +69,7 @@ class DokumentasiController extends Controller
 
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
-            $fileName = time() . '_' . $file->getClientOriginalName();
+            $fileName = Str::random(5) . '_' . time() . '_' . $file->getClientOriginalName();
             $file->storeAs('public/dokumentasi', $fileName);
 
             Dokumentasi::create([
