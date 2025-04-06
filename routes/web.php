@@ -109,7 +109,12 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:user')->prefix('user')->name('user.')->group(function () {
         Route::get('/dashboard-ukm', [DashboardUkmController::class, 'index'])->name('dashboard.index');
-
+        Route::get('/ukm-activity-data', [DashboardUkmController::class, 'getUkmActivityData'])->name('ukm-activity-data');
+        Route::get('/ukm-datatable', [DashboardUkmController::class, 'getUkmDataTable'])->name('ukm-datatable');
+        Route::get('/ukm-kegiatan-detail', [DashboardUkmController::class, 'getDetailKegiatan'])->name('ukm-kegiatan-detail');
+        Route::get('/ukm-monthly-activity', [DashboardUkmController::class, 'getUserMonthlyActivityData'])->name('ukm-monthly-activity');
+        Route::get('/upcoming-events', [DashboardUkmController::class, 'getUpcomingEvents'])->name('upcoming-events');
+        
         Route::prefix('jadwal')->name('jadwal.')->group(function () {
             Route::get('/', [JadwalController::class, 'index'])->name('index');
             Route::get('/data', [JadwalController::class, 'getData'])->name('getData');

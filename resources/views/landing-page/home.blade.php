@@ -150,7 +150,7 @@
                                                 <h5 class="mb-0">{{ $profile->nama }}</h5>
                                                 <h6 class="text-info">UKM</h6>
                                                 <p class="mb-0">{{ Str::limit($profile->deskripsi, 100) }}</p>
-                                                <a href="javascript:;"
+                                                <a href="{{ route('home.profil-ukm', $profile->user_id) }}"
                                                     class="text-info text-sm icon-move-right">Selengkapnya
                                                     <i class="fas fa-arrow-right text-xs ms-1"></i>
                                                 </a>

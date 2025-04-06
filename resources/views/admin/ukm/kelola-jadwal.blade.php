@@ -31,32 +31,30 @@
 
     {{-- Modal Tambah/Edit --}}
     <div class="modal fade" id="modal-jadwal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Tambah/Edit Jadwal</h5>
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span>&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="form-jadwal">
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label>Nama Kegiatan</label>
+                        <div class="form-group mb-3">
+                            <label for="nama_kegiatan" class="form-label">Nama Kegiatan</label>
                             <input type="text" class="form-control" id="nama_kegiatan" name="nama_kegiatan" required>
                         </div>
-                        <div class="form-group">
-                            <label>Tanggal Mulai</label>
+                        <div class="form-group mb-3">
+                            <label for="tanggal_mulai" class="form-label">Tanggal Mulai</label>
                             <input type="date" class="form-control" id="tanggal_mulai" name="tanggal_mulai" required>
                         </div>
-                        <div class="form-group">
-                            <label>Tanggal Selesai</label>
+                        <div class="form-group mb-3">
+                            <label for="tanggal_selesai" class="form-label">Tanggal Selesai</label>
                             <input type="date" class="form-control" id="tanggal_selesai" name="tanggal_selesai" required>
                         </div>
-                        <div class="form-group">
-                            <label>Tempat</label>
+                        <div class="form-group mb-3">
+                            <label for="tempat_id" class="form-label">Tempat</label>
                             <select class="form-control select2" id="tempat_id" name="tempat_id[]" multiple="multiple"
-                                required>
+                                required data-placeholder="Pilih lokasi kegiatan">
                                 @foreach ($tempat as $t)
                                     <option value="{{ $t->id }}">{{ $t->nama_tempat }}</option>
                                 @endforeach
@@ -64,7 +62,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
                 </form>
@@ -81,9 +79,24 @@
             }
         });
         $(document).ready(function() {
+            // Initialize Select2 with custom styling
             $('.select2').select2({
-                theme: 'bootstrap4'
+                theme: 'bootstrap4',
+                width: '100%',
+                placeholder: "Pilih lokasi kegiatan",
+                allowClear: true,
+                closeOnSelect: false,
+                templateResult: formatState,
+                dropdownParent: $('#modal-jadwal')
             });
+
+            // Custom formatting for Select2 options
+            function formatState(state) {
+                if (!state.id) {
+                    return state.text;
+                }
+                return $('<span><i class="fas fa-map-marker-alt me-2"></i> ' + state.text + '</span>');
+            }
 
             let table = $('#table-jadwal').DataTable({
                 processing: true,
@@ -123,11 +136,17 @@
                 }]
             });
 
-
+            // Fix modal closing issues - using Bootstrap 5 syntax
             $('#btn-add').click(function() {
                 $('#form-jadwal')[0].reset();
-                $('#tempat_id').val([]).trigger('change');
+                $('#tempat_id').val(null).trigger('change');
                 $('#modal-jadwal').modal('show');
+            });
+
+            // Ensure modal can be closed with close button and backdrop click
+            $('#modal-jadwal').on('hidden.bs.modal', function() {
+                $('#form-jadwal')[0].reset();
+                $('#tempat_id').val(null).trigger('change');
             });
 
             $(document).on('click', '.btn-edit', function() {
@@ -169,13 +188,10 @@
                         $.ajax({
                             url: "user/jadwal/" + id,
                             type: "DELETE",
-                            data: {
-                                "_token": $('meta[name="csrf-token"]').attr('content')
-                            },
                             success: function(response) {
                                 Swal.fire("Terhapus!", "Data berhasil dihapus.",
                                     "success");
-                                $('#dataTable').DataTable().ajax.reload();
+                                table.ajax.reload();
                             },
                             error: function() {
                                 Swal.fire("Gagal!", "Terjadi kesalahan saat menghapus.",
@@ -185,7 +201,59 @@
                     }
                 });
             });
-
         });
     </script>
+
+    <style>
+        /* Custom styling for Select2 */
+        .select2-container--bootstrap4 .select2-selection {
+            border-radius: 0.25rem;
+            border: 1px solid #ced4da;
+            height: auto;
+            min-height: calc(1.5em + 0.75rem + 2px);
+            padding: 0.375rem 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice {
+            background-color: #3E79F7;
+            border: none;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 10px;
+            margin-top: 2px;
+            margin-right: 5px;
+            font-size: 0.875rem;
+        }
+
+        .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice__remove {
+            color: white;
+            margin-right: 5px;
+            font-weight: bold;
+        }
+
+        .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice__remove:hover {
+            color: #f8f9fa;
+            background: none;
+        }
+
+        .select2-dropdown {
+            border-radius: 0.25rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            border: 1px solid #dee2e6;
+        }
+
+        .select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] {
+            background-color: #3E79F7;
+        }
+
+        .select2-container--bootstrap4 .select2-search--dropdown .select2-search__field {
+            border-radius: 0.25rem;
+            padding: 0.375rem 0.75rem;
+        }
+
+        .select2-container--bootstrap4 .select2-results__option {
+            padding: 0.375rem 0.75rem;
+        }
+    </style>
 @endsection

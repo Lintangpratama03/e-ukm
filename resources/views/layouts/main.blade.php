@@ -21,6 +21,11 @@
     <link href="{{ asset('assets') }}/css/vendor/fixedHeader.bootstrap5.css" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets') }}/css/vendor/fixedColumns.bootstrap5.css" rel="stylesheet" type="text/css" />
 
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css"
+        rel="stylesheet" />
+
     <!-- App css -->
     <link href="{{ asset('assets') }}/css/icons.min.css" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets') }}/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
@@ -87,14 +92,16 @@
     <script src="{{ asset('assets') }}/js/vendor/fixedColumns.bootstrap5.min.js"></script>
     <script src="{{ asset('assets') }}/js/vendor/fixedHeader.bootstrap5.min.js"></script>
     <script src="{{ asset('assets') }}/js/vendor/fullcalendar.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.full.min.js"></script>
+
     <!-- Datatable Init js -->
     <script src="{{ asset('assets') }}/js/pages/demo.datatable-init.js"></script>
     {{-- sweetalert --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{-- notiflix --}}
     <script src="https://cdn.jsdelivr.net/npm/notiflix@3.2.6/dist/notiflix-aio-3.2.6.min.js"></script>
-    <!-- Font Awesome CDN -->
-
 
     <script>
         function confirm_logout() {
