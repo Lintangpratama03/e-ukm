@@ -234,7 +234,6 @@
 
         </div>
 
-        <!-- Recent Activities Table -->
         <div class="card shadow mb-4 rounded-3">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold text-primary">Riwayat Kegiatan Terbaru</h6>
@@ -243,6 +242,61 @@
                 </a>
             </div>
             <div class="card-body">
+                <!-- Filter controls -->
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="filterYear" class="small fw-bold">Tahun</label>
+                            <select class="form-select form-select-sm" id="filterYear">
+                                <option value="">Semua Tahun</option>
+                                @php
+                                    $currentYear = date('Y');
+                                    $years = range($currentYear, $currentYear - 5);
+                                @endphp
+                                @foreach ($years as $year)
+                                    <option value="{{ $year }}">{{ $year }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="filterMonth" class="small fw-bold">Bulan</label>
+                            <select class="form-select form-select-sm" id="filterMonth">
+                                <option value="">Semua Bulan</option>
+                                <option value="1">Januari</option>
+                                <option value="2">Februari</option>
+                                <option value="3">Maret</option>
+                                <option value="4">April</option>
+                                <option value="5">Mei</option>
+                                <option value="6">Juni</option>
+                                <option value="7">Juli</option>
+                                <option value="8">Agustus</option>
+                                <option value="9">September</option>
+                                <option value="10">Oktober</option>
+                                <option value="11">November</option>
+                                <option value="12">Desember</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="filterStatus" class="small fw-bold">Status</label>
+                            <select class="form-select form-select-sm" id="filterStatus">
+                                <option value="">Semua Status</option>
+                                <option value="divalidasi">Divalidasi</option>
+                                <option value="menunggu">Menunggu</option>
+                                <option value="ditolak">Ditolak</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button id="resetFilters" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-undo me-1"></i> Reset Filter
+                        </button>
+                    </div>
+                </div>
+
                 <div class="table-responsive">
                     <table class="table table-hover" id="recentActivitiesTable" width="100%" cellspacing="0">
                         <thead>
@@ -267,11 +321,17 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         $(document).ready(function() {
-            // Initialize DataTable for recent activities
             var recentTable = $('#recentActivitiesTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('user.jadwal.getData') }}",
+                ajax: {
+                    url: "{{ route('user.dashboard.getData') }}",
+                    data: function(d) {
+                        d.year = $('#filterYear').val();
+                        d.month = $('#filterMonth').val();
+                        d.status = $('#filterStatus').val();
+                    }
+                },
                 columns: [{
                         data: 'nama_kegiatan',
                         name: 'nama_kegiatan'
@@ -305,16 +365,22 @@
                 ]
             });
 
-            // Monthly activity chart data
+            $('#filterYear, #filterMonth, #filterStatus').change(function() {
+                recentTable.ajax.reload();
+            });
+
+            $('#resetFilters').click(function() {
+                $('#filterYear, #filterMonth, #filterStatus').val('');
+                recentTable.ajax.reload();
+            });
+
             const monthlyData = @json($monthlyActivity);
 
-            // Prepare chart data
             const labels = monthlyData.map(item => item.month);
             const totalData = monthlyData.map(item => item.total);
             const validatedData = monthlyData.map(item => item.validated);
             const pendingData = monthlyData.map(item => item.pending);
 
-            // Initialize chart
             const ctx = document.getElementById('monthlyActivityChart').getContext('2d');
             const activityChart = new Chart(ctx, {
                 type: 'bar',

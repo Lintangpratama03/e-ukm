@@ -201,4 +201,47 @@ class DashboardUkmController extends Controller
 
         return response()->json($upcomingEvents);
     }
+    public function getData(Request $request)
+    {
+        $user_id = Auth::id();
+        $query = Auth::user()->role === 'admin' ? Jadwal::query() : Jadwal::where('user_id', $user_id);
+
+        // Apply filters from request
+        if ($request->has('year') && $request->year != '') {
+            $query->whereYear('tanggal_mulai', $request->year);
+        }
+
+        if ($request->has('month') && $request->month != '') {
+            $query->whereMonth('tanggal_mulai', $request->month);
+        }
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status_validasi', $request->status);
+        }
+
+        $query->with('tempats');
+
+        return DataTables::of($query)
+            ->addColumn('waktu', function ($jadwal) {
+                return Carbon::parse($jadwal->tanggal_mulai)->format('d/m/Y') . ' - ' .
+                    Carbon::parse($jadwal->tanggal_selesai)->format('d/m/Y');
+            })
+            ->addColumn('tempat', function ($jadwal) {
+                return $jadwal->tempats->pluck('nama_tempat')->join(', ') ?: 'Tidak ada tempat terdaftar';
+            })
+            ->addColumn('status', function ($jadwal) {
+                if ($jadwal->status_validasi === 'divalidasi') {
+                    return '<span class="badge bg-success">Disetujui</span>';
+                } elseif ($jadwal->status_validasi === 'ditolak') {
+                    return '<span class="badge bg-danger">Ditolak</span>';
+                } else {
+                    return '<span class="badge bg-warning">Menunggu</span>';
+                }
+            })
+            ->addColumn('action', function ($jadwal) {
+                return '<a href="' . route('user.jadwal.show', $jadwal->id) . '" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>';
+            })
+            ->rawColumns(['status', 'action'])
+            ->make(true);
+    }
 }
