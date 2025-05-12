@@ -89,11 +89,25 @@ class JadwalController extends Controller
             'tanggal_selesai' => $request->tanggal_selesai,
         ]);
 
+        $Profil = Profil::where('user_id', Auth::id())->first();
+        $nama = $Profil->ukm->nama_ukm;
+
+
+        $jadwal->tempats()->attach($request->tempat_id);
+        $tempat = Tempat::whereIn('id', $request->tempat_id)->pluck('nama_tempat')->first();
         $no = Profil::where('user_id', 1)->value('kontak');
         // dd($no);
-        $sendwa = $this->sendWa($no, 'Jadwal baru telah ditambahkan: ' . $request->nama_kegiatan . ' pada tanggal ' . $request->tanggal_mulai . ' sampai ' . $request->tanggal_selesai);
-        $jadwal->tempats()->attach($request->tempat_id);
+        $message = "
+                    Notifikasi Jadwal Baru UKM \n
+                    Nama UKM : $nama \n
+                    Nama Kegiatan: $request->nama_kegiatan \n
+                    Tanggal Mulai :  $request->tanggal_mulai \n
+                    Tanggal Selesai :$request->tanggal_selesai \n
+                    Tempat : $tempat \n
+                    Silahkan cek di aplikasi untuk detail lebih lanjut. \n
 
+                ";
+        $sendwa = $this->sendWa($no, $message);
         return response()->json([
             'status' => 'success',
             'message' => 'Jadwal berhasil ditambahkan.'
@@ -129,7 +143,7 @@ class JadwalController extends Controller
             // echo $response; //log response fonnte
         } catch (\Throwable $th) {
             //throw $th;
-            dd($e);
+            dd($th);
         }
     }
 
