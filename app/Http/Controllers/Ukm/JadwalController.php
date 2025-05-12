@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Jadwal;
 use App\Models\Tempat;
 use App\Models\JadwalTempat;
+use App\Models\Profil;
 use App\Models\TbLembarPengesahan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
@@ -88,6 +89,9 @@ class JadwalController extends Controller
             'tanggal_selesai' => $request->tanggal_selesai,
         ]);
 
+        $no = Profil::where('user_id', 1)->value('kontak');
+        // dd($no);
+        $sendwa = $this->sendWa($no, 'Jadwal baru telah ditambahkan: ' . $request->nama_kegiatan . ' pada tanggal ' . $request->tanggal_mulai . ' sampai ' . $request->tanggal_selesai);
         $jadwal->tempats()->attach($request->tempat_id);
 
         return response()->json([
@@ -96,6 +100,38 @@ class JadwalController extends Controller
         ]);
     }
 
+    public function sendWa($receiver, $message)
+    {
+        try {
+            $token = "M9kpxFexDAbVG5CzcmLJ";
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api.fonnte.com/send',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => array(
+                    'target' => $receiver,
+                    'message' => $message,
+                ),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: ' . $token
+                ),
+            ));
+
+            $response = curl_exec($curl);
+            // dd($response);
+            curl_close($curl);
+            // echo $response; //log response fonnte
+        } catch (\Throwable $th) {
+            //throw $th;
+            dd($e);
+        }
+    }
 
 
     public function edit($id)
