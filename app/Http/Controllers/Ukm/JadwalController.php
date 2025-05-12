@@ -99,7 +99,7 @@ class JadwalController extends Controller
         $message =
             "* Notifikasi Jadwal Baru UKM.*\n\n"
             . "*Detail Pengajuan:*\n"
-            . "* Nama UKM *: $nama\n"
+            . "*Nama UKM*: $nama\n"
             . "*Nama Kegiatan*: $request->nama_kegiatan\n"
             . "*Tanggal Mulai:* $request->tanggal_mulai\n"
             . "*Tanggal Selesai:* $request->tanggal_selesai\n"
