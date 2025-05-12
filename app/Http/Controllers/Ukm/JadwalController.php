@@ -90,23 +90,21 @@ class JadwalController extends Controller
         ]);
 
         $Profil = Profil::where('user_id', Auth::id())->first();
-        $nama = $Profil->ukm->nama_ukm;
-
-
+        // dd($Profil);
+        $nama = $Profil->nama;
         $jadwal->tempats()->attach($request->tempat_id);
         $tempat = Tempat::whereIn('id', $request->tempat_id)->pluck('nama_tempat')->first();
         $no = Profil::where('user_id', 1)->value('kontak');
         // dd($no);
-        $message = "
-                    Notifikasi Jadwal Baru UKM \n
-                    Nama UKM : $nama \n
-                    Nama Kegiatan: $request->nama_kegiatan \n
-                    Tanggal Mulai :  $request->tanggal_mulai \n
-                    Tanggal Selesai :$request->tanggal_selesai \n
-                    Tempat : $tempat \n
-                    Silahkan cek di aplikasi untuk detail lebih lanjut. \n
-
-                ";
+        $message =
+            "* Notifikasi Jadwal Baru UKM.*\n\n"
+            . "*Detail Pengajuan:*\n"
+            . "* Nama UKM *: $nama\n"
+            . "*Nama Kegiatan*: $request->nama_kegiatan\n"
+            . "*Tanggal Mulai:* $request->tanggal_mulai\n"
+            . "*Tanggal Selesai:* $request->tanggal_selesai\n"
+            . "*Tempat:* $tempat\n"
+            . "Silahkan cek di aplikasi untuk detail lebih lanjut.\n\n";
         $sendwa = $this->sendWa($no, $message);
         return response()->json([
             'status' => 'success',
