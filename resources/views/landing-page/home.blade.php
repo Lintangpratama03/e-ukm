@@ -84,8 +84,8 @@
                                             @foreach ($events as $index => $event)
                                                 <tr>
                                                     <td>{{ $index + 1 }}</td>
-                                                    <td>{{ $event->nama_kegiatan }}</td>
-                                                    <td>{{ $event->ukm->nama }}</td>
+                                                    <td>{{ $event->nama_kegiatan ?? '-' }}</td>
+                                                    <td>{{ $event->ukm->nama ?? '-' }}</td>
                                                     <td>{{ \Carbon\Carbon::parse($event->tanggal_mulai)->format('d M Y') }}
                                                         -
                                                         {{ \Carbon\Carbon::parse($event->tanggal_selesai)->format('d M Y') }}
