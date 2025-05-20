@@ -53,6 +53,7 @@
                         <th>Status Pengajuan</th>
                         <td><span
                                 class="badge bg-{{ $jadwal->status_validasi == 'divalidasi' ? 'success' : 'warning' }}">{{ ucfirst($jadwal->status_validasi) }}</span>
+                            {{ $jadwal->catatan_validasi ?? '-' }}
                         </td>
                     </tr>
                     <tr>
