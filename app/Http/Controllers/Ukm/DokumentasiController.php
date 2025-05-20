@@ -88,12 +88,6 @@ class DokumentasiController extends Controller
     public function destroy($id)
     {
         $dokumentasi = Dokumentasi::findOrFail($id);
-
-        if ($dokumentasi->user_id != Auth::id()) {
-            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menghapus foto ini');
-        }
-
-        // Delete file from storage
         if (Storage::exists('public/dokumentasi/' . $dokumentasi->foto)) {
             Storage::delete('public/dokumentasi/' . $dokumentasi->foto);
         }

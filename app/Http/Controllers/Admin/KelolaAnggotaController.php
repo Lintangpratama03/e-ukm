@@ -60,8 +60,9 @@ class KelolaAnggotaController extends Controller
 
     public function update(Request $request)
     {
+        // dd($request->all());
         $anggota = Anggota::find($request->anggota_id);
-
+        // dd($anggota);
         $filePath = $anggota->foto;
         if ($request->hasFile('foto')) {
             $filePath = $request->file('foto')->store('uploads', 'public');

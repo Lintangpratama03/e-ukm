@@ -77,8 +77,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/data', [TempatController::class, 'getData'])->name('tempat.getData');
             Route::post('/', [TempatController::class, 'store'])->name('tempat.store');
             Route::get('/edit/{id}', [TempatController::class, 'edit'])->name('tempat.edit');
-            Route::post('/{id}', [TempatController::class, 'update'])->name('tempat.update');
-            Route::delete('/{id}', [TempatController::class, 'destroy'])->name('tempat.destroy');
+            Route::post('update/{id}', [TempatController::class, 'update'])->name('tempat.update');
+            Route::delete('delete/{id}', [TempatController::class, 'destroy'])->name('tempat.destroy');
         });
 
         Route::prefix('user')->group(function () {
@@ -86,7 +86,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/getData', [UserController::class, 'getData'])->name('user.getData');
             Route::post('/activate/{id}', [UserController::class, 'activate'])->name('user.activate');
             Route::get('/detail/{id}', [UserController::class, 'detail'])->name('user.detail');
-            Route::delete('/{id}', [UserController::class, 'destroy'])->name('user.destroy');
+            Route::delete('delete/{id}', [UserController::class, 'delete'])->name('user.destroy');
         });
         Route::prefix('jadwal')->name('jadwal.')->group(function () {
             Route::get('/', [KelolaJadwalController::class, 'index'])->name('index');

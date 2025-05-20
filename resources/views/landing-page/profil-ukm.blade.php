@@ -239,7 +239,7 @@
                                                                     class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
                                                                     <div class="avatar-container mb-2">
                                                                         @if ($anggota->foto)
-                                                                            <img src="{{ asset('storage/anggota/' . $anggota->foto) }}"
+                                                                            <img src="{{ asset('storage/' . $anggota->foto) }}"
                                                                                 class="avatar rounded-circle avatar-lg"
                                                                                 alt="{{ $anggota->nama }}">
                                                                         @else

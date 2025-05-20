@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Profil;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -73,23 +74,29 @@ class KelolaProfilController extends Controller
      */
     public function updatePassword(Request $request)
     {
-        $request->validate([
-            'password_lama' => 'required',
-            'password_baru' => 'required|min:6|confirmed',
-        ]);
+        // dd($request->all());
+        try {
+            // dd(Auth::user());
+            $request->validate([
+                'password_lama' => 'required'
+            ]);
 
-        $user = Auth::user();
+            $user = Auth::user();
 
-        // Cek apakah password lama sesuai
-        if (!Hash::check($request->password_lama, $user->password)) {
-            return redirect()->back()->with('error', 'Password lama salah!');
+            // Cek apakah password lama sesuai
+            if (!Hash::check($request->password_lama, $user->password)) {
+                return redirect()->back()->with('error', 'Password lama salah!');
+            }
+
+            // Update password baru
+            User::where('id', $user->id)->update([
+                'password' => Hash::make($request->password_baru)
+            ]);
+
+            return redirect()->back()->with('success', 'Password berhasil diperbarui!');
+        } catch (\Exception $e) {
+            dd($e);
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        // Update password baru
-        $user->update([
-            'password' => Hash::make($request->password_baru),
-        ]);
-
-        return redirect()->back()->with('success', 'Password berhasil diperbarui!');
     }
 }

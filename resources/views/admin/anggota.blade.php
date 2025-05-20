@@ -32,7 +32,6 @@
             <div class="modal-content">
                 <form id="formAnggota">
                     @csrf
-                    <input type="hidden" id="anggota_id">
                     <div class="modal-header">
                         <h5 class="modal-title">Tambah Anggota</h5>
                         <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
@@ -40,6 +39,7 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-6 mb-3">
+                                <input type="hidden" class="form-control" name="anggota_id" id="anggota_id">
                                 <label>Nama</label>
                                 <input type="text" class="form-control" id="nama" name="nama" required>
                             </div>
@@ -102,6 +102,11 @@
 @section('script')
     <script>
         $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
             var table = $('#anggotaTable').DataTable({
                 processing: true,
                 serverSide: true,

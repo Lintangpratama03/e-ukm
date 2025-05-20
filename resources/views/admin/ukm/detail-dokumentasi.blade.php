@@ -128,14 +128,15 @@
                                                 </td>
                                                 <td>{{ $item->deskripsi ?: '-' }}</td>
                                                 <td>
-                                                    <form action="{{ route('dokumentasi.destroy', $item->id) }}"
-                                                        method="POST" class="d-inline"
-                                                        onsubmit="return confirm('Yakin ingin menghapus foto ini?');">
+                                                    <button type="button" class="btn btn-sm btn-danger delete-foto"
+                                                        data-id="{{ $item->id }}">
+                                                        <i class="dripicons-trash"></i>
+                                                    </button>
+                                                    <form id="delete-form-{{ $item->id }}"
+                                                        action="{{ route('dokumentasi.destroy', $item->id) }}"
+                                                        method="POST" class="d-none">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger">
-                                                            <i class="dripicons-trash"></i>
-                                                        </button>
                                                     </form>
                                                 </td>
                                             </tr>
@@ -173,6 +174,25 @@
                         "previous": "Sebelumnya"
                     },
                 }
+            });
+
+            $('.delete-foto').on('click', function() {
+                const id = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Konfirmasi Hapus',
+                    text: "Apakah Anda yakin ingin menghapus foto ini?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('delete-form-' + id).submit();
+                    }
+                });
             });
         });
     </script>
