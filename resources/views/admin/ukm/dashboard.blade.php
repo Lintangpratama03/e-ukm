@@ -382,57 +382,165 @@
             const pendingData = monthlyData.map(item => item.pending);
 
             const ctx = document.getElementById('monthlyActivityChart').getContext('2d');
-            const activityChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Total Kegiatan',
-                        data: totalData,
-                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }, {
-                        label: 'Divalidasi',
-                        data: validatedData,
-                        backgroundColor: 'rgba(40, 167, 69, 0.8)',
-                        borderColor: 'rgba(40, 167, 69, 1)',
-                        borderWidth: 1,
-                        hidden: true
-                    }, {
-                        label: 'Menunggu',
-                        data: pendingData,
-                        backgroundColor: 'rgba(255, 193, 7, 0.8)',
-                        borderColor: 'rgba(255, 193, 7, 1)',
-                        borderWidth: 1,
-                        hidden: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
+            // Modified chart code with year filter functionality
+            $(document).ready(function() {
+                // Initial data load
+                let monthlyData = @json($monthlyActivity);
+                let activityChart;
+
+                // Create a year filter for the chart
+                const currentYear = new Date().getFullYear();
+                let chartYearSelect = $('<select>', {
+                    id: 'chartYearFilter',
+                    class: 'form-select form-select-sm ms-2',
+                    style: 'width: auto;'
+                });
+
+                // Add year options (current year and 5 years back)
+                for (let year = currentYear; year >= currentYear - 5; year--) {
+                    chartYearSelect.append($('<option>', {
+                        value: year,
+                        text: year,
+                        selected: year === currentYear
+                    }));
+                }
+
+                // Add the year filter to chart header
+                $('.card-header:has(#viewTotal)')
+                    .append($('<div>', {
+                            class: 'd-flex align-items-center ms-2'
+                        })
+                        .append($('<label>', {
+                            for: 'chartYearFilter',
+                            class: 'small fw-bold me-2',
+                            text: 'Tahun:'
+                        }))
+                        .append(chartYearSelect));
+
+                // Initialize the chart
+                initializeChart(monthlyData);
+
+                // Event handler for chart year filter
+                $('#chartYearFilter').change(function() {
+                    const selectedYear = $(this).val();
+                    fetchChartData(selectedYear);
+                });
+
+                // Function to fetch data for a specific year
+                function fetchChartData(year) {
+                    $.ajax({
+                        url: "{{ route('user.ukm-monthly-activity') }}",
+                        method: 'GET',
+                        data: {
+                            year: year
                         },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const datasetLabel = context.dataset.label || '';
-                                    return `${datasetLabel}: ${context.raw}`;
+                        success: function(response) {
+                            updateChart(response);
+                        },
+                        error: function(xhr) {
+                            console.error('Error fetching chart data:', xhr);
+                        }
+                    });
+                }
+
+                // Function to initialize the chart
+                function initializeChart(data) {
+                    const labels = data.map(item => item.month);
+                    const totalData = data.map(item => item.total);
+                    const validatedData = data.map(item => item.validated);
+                    const pendingData = data.map(item => item.pending);
+
+                    const ctx = document.getElementById('monthlyActivityChart').getContext('2d');
+                    activityChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Total Kegiatan',
+                                data: totalData,
+                                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            }, {
+                                label: 'Divalidasi',
+                                data: validatedData,
+                                backgroundColor: 'rgba(40, 167, 69, 0.8)',
+                                borderColor: 'rgba(40, 167, 69, 1)',
+                                borderWidth: 1,
+                                hidden: true
+                            }, {
+                                label: 'Menunggu',
+                                data: pendingData,
+                                backgroundColor: 'rgba(255, 193, 7, 0.8)',
+                                borderColor: 'rgba(255, 193, 7, 1)',
+                                borderWidth: 1,
+                                hidden: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        precision: 0
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const datasetLabel = context.dataset.label || '';
+                                            return `${datasetLabel}: ${context.raw}`;
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
+                    });
                 }
+
+                // Function to update the chart with new data
+                function updateChart(data) {
+                    if (!activityChart) return;
+
+                    activityChart.data.labels = data.map(item => item.month);
+                    activityChart.data.datasets[0].data = data.map(item => item.total);
+                    activityChart.data.datasets[1].data = data.map(item => item.validated);
+                    activityChart.data.datasets[2].data = data.map(item => item.pending);
+
+                    activityChart.update();
+                }
+
+                // Toggle between chart views
+                $('#viewTotal').click(function() {
+                    activityChart.data.datasets[0].hidden = false;
+                    activityChart.data.datasets[1].hidden = true;
+                    activityChart.data.datasets[2].hidden = true;
+                    $(this).addClass('active').siblings().removeClass('active');
+                    activityChart.update();
+                });
+
+                $('#viewValidated').click(function() {
+                    activityChart.data.datasets[0].hidden = true;
+                    activityChart.data.datasets[1].hidden = false;
+                    activityChart.data.datasets[2].hidden = true;
+                    $(this).addClass('active').siblings().removeClass('active');
+                    activityChart.update();
+                });
+
+                $('#viewPending').click(function() {
+                    activityChart.data.datasets[0].hidden = true;
+                    activityChart.data.datasets[1].hidden = true;
+                    activityChart.data.datasets[2].hidden = false;
+                    $(this).addClass('active').siblings().removeClass('active');
+                    activityChart.update();
+                });
             });
 
             // Toggle between chart views

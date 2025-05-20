@@ -166,10 +166,9 @@ class DashboardUkmController extends Controller
 
         return response()->json(['data' => $data]);
     }
-
     public function getUserMonthlyActivityData(Request $request)
     {
-        $user_id = $request->id;
+        $user_id = Auth::id();
         $year = $request->year ?? Carbon::now()->year;
 
         $monthlyData = $this->getMonthlyActivityData($user_id, $year);
@@ -201,6 +200,7 @@ class DashboardUkmController extends Controller
 
         return response()->json($upcomingEvents);
     }
+
     public function getData(Request $request)
     {
         $user_id = Auth::id();

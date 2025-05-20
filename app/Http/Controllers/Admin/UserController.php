@@ -41,6 +41,12 @@ class UserController extends Controller
     public function delete($id)
     {
         $user = User::findOrFail($id);
+
+        // Hapus profil terkait jika ada
+        if ($user->profil) {
+            $user->profil->delete();
+        }
+
         $user->delete();
         return response()->json(['message' => 'User berhasil dihapus']);
     }
