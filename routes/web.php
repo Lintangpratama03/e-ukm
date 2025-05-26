@@ -107,6 +107,7 @@ Route::middleware('auth')->group(function () {
     });
 
 
+
     Route::middleware('role:user')->prefix('user')->name('user.')->group(function () {
         Route::get('/dashboard-ukm', [DashboardUkmController::class, 'index'])->name('dashboard.index');
         Route::get('/ukm-activity-data', [DashboardUkmController::class, 'getUkmActivityData'])->name('ukm-activity-data');
@@ -126,6 +127,9 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{id}', [JadwalController::class, 'destroy'])->name('destroy');
             Route::post('/upload/{id}', [JadwalController::class, 'uploadProposal'])->name('upload');
             Route::get('/jadwal/{id}/generate-pdf', [JadwalController::class, 'generatePdf'])->name('generate-pdf');
+            Route::get('/proposall/{id}', [JadwalController::class, 'formProposal'])->name('formProposal');
+            Route::post('/storeProposal/{id}', [JadwalController::class, 'storeProposal'])->name('storeProposal');
+            Route::get('/jadwal/{id}/generateProposalPdf', [JadwalController::class, 'generateProposalPdf'])->name('generateProposalPdf');
         });
     });
 });

@@ -544,29 +544,29 @@
             });
 
             // Toggle between chart views
-            $('#viewTotal').click(function() {
-                activityChart.data.datasets[0].hidden = false;
-                activityChart.data.datasets[1].hidden = true;
-                activityChart.data.datasets[2].hidden = true;
-                $(this).addClass('active').siblings().removeClass('active');
-                activityChart.update();
-            });
+            // $('#viewTotal').click(function() {
+            //     activityChart.data.datasets[0].hidden = false;
+            //     activityChart.data.datasets[1].hidden = true;
+            //     activityChart.data.datasets[2].hidden = true;
+            //     $(this).addClass('active').siblings().removeClass('active');
+            //     activityChart.update();
+            // });
 
-            $('#viewValidated').click(function() {
-                activityChart.data.datasets[0].hidden = true;
-                activityChart.data.datasets[1].hidden = false;
-                activityChart.data.datasets[2].hidden = true;
-                $(this).addClass('active').siblings().removeClass('active');
-                activityChart.update();
-            });
+            // $('#viewValidated').click(function() {
+            //     activityChart.data.datasets[0].hidden = true;
+            //     activityChart.data.datasets[1].hidden = false;
+            //     activityChart.data.datasets[2].hidden = true;
+            //     $(this).addClass('active').siblings().removeClass('active');
+            //     activityChart.update();
+            // });
 
-            $('#viewPending').click(function() {
-                activityChart.data.datasets[0].hidden = true;
-                activityChart.data.datasets[1].hidden = true;
-                activityChart.data.datasets[2].hidden = false;
-                $(this).addClass('active').siblings().removeClass('active');
-                activityChart.update();
-            });
+            // $('#viewPending').click(function() {
+            //     activityChart.data.datasets[0].hidden = true;
+            //     activityChart.data.datasets[1].hidden = true;
+            //     activityChart.data.datasets[2].hidden = false;
+            //     $(this).addClass('active').siblings().removeClass('active');
+            //     activityChart.update();
+            // });
             let currentEventIndex = 0;
             const totalEvents = $('.event-card').length;
 

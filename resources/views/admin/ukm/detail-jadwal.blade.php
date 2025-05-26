@@ -65,13 +65,19 @@
                     <tr>
                         <th>Proposal</th>
                         <td>
-                            @if ($jadwal->proposal)
-                                <a href="{{ asset('storage/' . $jadwal->proposal) }}" target="_blank"
-                                    class="btn btn-sm btn-info">
-                                    <i class="dripicons-preview"></i> Lihat Proposal
-                                </a>
+                            @if ($jadwal->status_validasi == 'divalidasi')
+                                <a href="{{ route('user.jadwal.formProposal', $jadwal->id) }}" class="btn btn-primary">Form
+                                    Proposal</a>
+                                @if ($jadwal->proposal)
+                                    <a href="{{ asset('storage/' . $jadwal->proposal) }}" target="_blank"
+                                        class="btn btn-sm btn-info">
+                                        <i class="dripicons-preview"></i> Lihat Proposal
+                                    </a>
+                                @else
+                                    <span class="text-muted">Belum diunggah</span>
+                                @endif
                             @else
-                                <span class="text-muted">Belum diunggah</span>
+                                <span class="text-muted">Belum Bisa Upload</span>
                             @endif
                         </td>
                     </tr>
@@ -168,7 +174,7 @@
                                                     </option>
                                                 </select>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="form-group d-none">
                                                 <label>Upload Proposal</label>
                                                 <input type="file" name="proposal" class="form-control">
                                             </div>

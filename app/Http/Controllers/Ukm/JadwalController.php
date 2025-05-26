@@ -8,6 +8,7 @@ use App\Models\Jadwal;
 use App\Models\Tempat;
 use App\Models\JadwalTempat;
 use App\Models\Profil;
+use App\Models\Proposal;
 use App\Models\TbLembarPengesahan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
@@ -187,7 +188,6 @@ class JadwalController extends Controller
         $jadwal = Jadwal::findOrFail($id);
 
         $request->validate([
-            'proposal' => 'nullable|file|mimes:pdf',
             'nama_kegiatan' => 'required|string|max:255',
             'sasaran' => 'required|string',
             'program' => 'required|string',
@@ -252,6 +252,172 @@ class JadwalController extends Controller
             $jadwal->lembar_pengesahan = $path;
             $jadwal->save();
             return redirect()->back()->with('success', 'Lembar Pengesahan berhasil disimpan sebagai PDF.');
+        } catch (\Exception $e) {
+            dd($e);
+            return redirect()->back()->with('error', 'Gagal membuat PDF: ' . $e->getMessage());
+        }
+    }
+
+
+    public function formProposal($id)
+    {
+        $jadwal = Jadwal::findOrFail($id);
+        $proposal = Proposal::where('jadwal_id', $id)->first();
+        // dd($jadwal, $proposal);
+        return view('admin.ukm.proposal.form', compact('jadwal', 'proposal'));
+    }
+
+    public function storeProposal(Request $request, $id)
+    {
+        // dd(1);
+        $jadwal = Jadwal::findOrFail($id);
+
+
+        $dasar_kegiatan = array_filter(explode("\n", $request->dasar_kegiatan));
+        $metode_pelaksanaan = array_filter(explode("\n", $request->metode_pelaksanaan));
+        $tahapan_pelaksanaan = array_filter(explode("\n", $request->tahapan_pelaksanaan));
+
+
+        $materi_kegiatan = [];
+        if ($request->has('materi_nama')) {
+            foreach ($request->materi_nama as $key => $nama) {
+                if (!empty($nama)) {
+                    $materi_kegiatan[] = [
+                        'nama' => $nama,
+                        'judul' => $request->materi_judul[$key] ?? '',
+                        'pemateri' => $request->materi_pemateri[$key] ?? ''
+                    ];
+                }
+            }
+        }
+
+
+        $susunan_acara = [];
+        if ($request->has('acara_waktu')) {
+            foreach ($request->acara_waktu as $key => $waktu) {
+                if (!empty($waktu)) {
+                    $susunan_acara[] = [
+                        'waktu' => $waktu,
+                        'kegiatan' => $request->acara_kegiatan[$key] ?? '',
+                        'pengisi' => $request->acara_pengisi[$key] ?? ''
+                    ];
+                }
+            }
+        }
+
+
+        $anggaran_belanja = [];
+        if ($request->has('anggaran_uraian')) {
+            foreach ($request->anggaran_uraian as $key => $uraian) {
+                if (!empty($uraian)) {
+                    $qty = (int)($request->anggaran_qty[$key] ?? 0);
+                    $total_barang = (int)($request->anggaran_total_barang[$key] ?? 0);
+                    $harga = (int)str_replace('.', '', $request->anggaran_harga[$key] ?? 0);
+                    $total = $qty * $harga;
+
+                    $anggaran_belanja[] = [
+                        'akun' => $request->anggaran_akun[$key] ?? '',
+                        'kategori' => $request->anggaran_kategori[$key] ?? '',
+                        'uraian' => $uraian,
+                        'rincian' => $request->anggaran_rincian[$key] ?? '',
+                        'total_barang' => $total_barang,
+                        'qty' => $qty,
+                        'harga_satuan' => $harga,
+                        'total_harga' => $total,
+                        'harga_satuan_format' => 'Rp' . number_format($harga, 0, ',', '.'),
+                        'total_harga_format' => 'Rp' . number_format($total, 0, ',', '.')
+                    ];
+                }
+            }
+        }
+
+        $susunan_kepanitiaan = [];
+        if ($request->has('panitia_nama')) {
+            foreach ($request->panitia_nama as $key => $nama) {
+                if (!empty($nama)) {
+                    $susunan_kepanitiaan[] = [
+                        'nama' => $nama,
+                        'nim' => $request->panitia_nim[$key] ?? '',
+                        'prodi' => $request->panitia_prodi[$key] ?? '',
+                        'jabatan' => $request->panitia_jabatan[$key] ?? ''
+                    ];
+                }
+            }
+        }
+
+        $bulan_headers = array_map('trim', explode(',', $request->bulan_headers));
+        $jadwal_kegiatan = [];
+        if ($request->has('jadwal_nama')) {
+            foreach ($request->jadwal_nama as $key => $nama) {
+                if (!empty($nama)) {
+                    $timeline_string = $request->jadwal_timeline[$key] ?? '0,0,0,0,0,0,0,0,0,0,0,0';
+                    $timeline_array = array_map('intval', explode(',', $timeline_string));
+
+                    $jadwal_kegiatan[] = [
+                        'nama' => $nama,
+                        'timeline' => $timeline_array
+                    ];
+                }
+            }
+        }
+        $proposalData = [
+            'jadwal_id' => $id,
+            'kegiatan_singkat' => $request->kegiatan_singkat,
+            'kegiatan_lengkap' => $request->kegiatan_lengkap,
+            'nama_penyusun' => $request->nama_penyusun,
+            'nim_penyusun' => $request->nim_penyusun,
+            'nama_institusi' => $request->nama_institusi,
+            'tahun' => $request->tahun,
+            'dasar_kegiatan' => $dasar_kegiatan,
+            'gambaran_umum' => $request->gambaran_umum,
+            'penerima_manfaat' => $request->penerima_manfaat,
+            'metode_pelaksanaan' => $metode_pelaksanaan,
+            'tahapan_pelaksanaan' => $tahapan_pelaksanaan,
+            'deskripsi_waktu_pelaksanaan' => $request->deskripsi_waktu_pelaksanaan,
+            'bulan_headers' => $bulan_headers,
+            'jadwal_kegiatan' => $jadwal_kegiatan,
+            'kurun_waktu_pencapaian' => $request->kurun_waktu_pencapaian,
+            'deskripsi_materi_kegiatan' => $request->deskripsi_materi_kegiatan,
+            'materi_kegiatan' => $materi_kegiatan,
+            'hari_tanggal_acara' => $request->hari_tanggal_acara,
+            'susunan_acara' => $susunan_acara,
+            'deskripsi_biaya' => $request->deskripsi_biaya,
+            'judul_anggaran' => $request->judul_anggaran,
+            'anggaran_belanja' => $anggaran_belanja,
+            'total_anggaran' => str_replace('.', '', $request->total_anggaran),
+            'judul_kepanitiaan' => $request->judul_kepanitiaan,
+            'susunan_kepanitiaan' => $susunan_kepanitiaan
+        ];
+
+        $proposal = Proposal::updateOrCreate(
+            ['jadwal_id' => $id],
+            $proposalData
+        );
+        $this->generateProposalPdf($id);
+        return redirect()->route('user.jadwal.show', $id)
+            ->with('success', 'Data proposal berhasil disimpan.');
+    }
+
+    public function generateProposalPdf($id)
+    {
+        $jadwal = Jadwal::with('tempats')->findOrFail($id);
+        $proposal = Proposal::where('jadwal_id', $id)->first();
+        // dd($jadwal);
+        if (!$proposal) {
+            return redirect()->back()->with('error', 'Data proposal tidak ditemukan.');
+        }
+        $logo = public_path("assets/images/logopolinema.png");
+        try {
+            $pdf = Pdf::loadView('admin.proposal.proposal', compact('logo', 'jadwal', 'proposal'));
+            $filename = 'proposal_' . $jadwal->id . '.pdf';
+            $path = 'proposal/' . $filename;
+
+            Storage::disk('public')->put($path, $pdf->output());
+
+            $jadwal->proposal = $path;
+            $jadwal->save();
+
+            return redirect()->back()->with('success', 'Proposal berhasil disimpan sebagai PDF.');
         } catch (\Exception $e) {
             dd($e);
             return redirect()->back()->with('error', 'Gagal membuat PDF: ' . $e->getMessage());
