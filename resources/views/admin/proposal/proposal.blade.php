@@ -289,7 +289,7 @@
                             <td>{{ $loop->iteration }}</td>
                             <td style="text-align: left;">{{ $kegiatan['nama'] }}</td>
                             @foreach ($kegiatan['timeline'] as $minggu)
-                                <td>{{ $minggu ? '✓' : '' }}</td>
+                                <td>{{ $minggu ? 'v' : '' }}</td>
                             @endforeach
                         </tr>
                     @endforeach
