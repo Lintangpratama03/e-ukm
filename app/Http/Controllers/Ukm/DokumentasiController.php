@@ -35,7 +35,12 @@ class DokumentasiController extends Controller
                 return $row->tempats->pluck('nama_tempat')->implode(', ');
             })
             ->addColumn('jumlah_foto', function ($row) {
-                return $row->dokumentasi->count();
+                $pending = $row->dokumentasi->where('status', 0)->count();
+                $validated = $row->dokumentasi->where('status', 1)->count();
+                return "
+                    <span >Pending: {$pending}</span><br>
+                    <span>Validated: {$validated}</span>
+                ";
             })
             ->addColumn('action', function ($row) {
                 return '
@@ -43,7 +48,7 @@ class DokumentasiController extends Controller
                         <i class="dripicons-preview"></i>
                     </a>';
             })
-            ->rawColumns(['status', 'status_ttd', 'action'])
+            ->rawColumns(['jumlah_foto', 'action'])
             ->make(true);
     }
 
@@ -77,17 +82,56 @@ class DokumentasiController extends Controller
                 'jadwal_id' => $id,
                 'foto' => $fileName,
                 'deskripsi' => $request->deskripsi,
+                'status' => 0,
             ]);
 
-            return redirect()->back()->with('success', 'Foto berhasil diunggah');
+            return redirect()->back()->with('success', 'Foto berhasil diunggah dan menunggu validasi admin');
         }
 
         return redirect()->back()->with('error', 'Gagal mengunggah foto');
     }
 
+    public function validateFoto($id)
+    {
+        if (Auth::user()->role !== 'admin') {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk memvalidasi foto');
+        }
+
+        $dokumentasi = Dokumentasi::findOrFail($id);
+        $dokumentasi->update([
+            'status' => 1,
+            'validated_by' => Auth::id(),
+            'validated_at' => now()
+        ]);
+
+        return redirect()->back()->with('success', 'Foto berhasil divalidasi');
+    }
+
+    public function rejectFoto($id)
+    {
+        if (Auth::user()->role !== 'admin') {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menolak foto');
+        }
+
+        $dokumentasi = Dokumentasi::findOrFail($id);
+
+        if (Storage::exists('public/dokumentasi/' . $dokumentasi->foto)) {
+            Storage::delete('public/dokumentasi/' . $dokumentasi->foto);
+        }
+
+        $dokumentasi->delete();
+        return redirect()->back()->with('success', 'Foto berhasil ditolak dan dihapus');
+    }
+
     public function destroy($id)
     {
         $dokumentasi = Dokumentasi::findOrFail($id);
+
+        // Check permission
+        if (Auth::user()->role !== 'admin' && $dokumentasi->user_id !== Auth::id()) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menghapus foto ini');
+        }
+
         if (Storage::exists('public/dokumentasi/' . $dokumentasi->foto)) {
             Storage::delete('public/dokumentasi/' . $dokumentasi->foto);
         }

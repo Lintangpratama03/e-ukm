@@ -63,6 +63,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/data', [DokumentasiController::class, 'getData'])->name('getData');
         Route::get('/show/{id}', [DokumentasiController::class, 'show'])->name('show');
         Route::post('/upload/{id}', [DokumentasiController::class, 'uploadFoto'])->name('upload');
+        Route::patch('/validate/{id}', [DokumentasiController::class, 'validateFoto'])->name('validate');
+        Route::delete('/reject/{id}', [DokumentasiController::class, 'rejectFoto'])->name('reject');
         Route::delete('/{id}', [DokumentasiController::class, 'destroy'])->name('destroy');
     });
 

@@ -33,8 +33,8 @@ class HomeController extends Controller
             ->where('tanggal_mulai', '>=', now())
             ->orderBy('tanggal_mulai', 'asc')
             ->get();
-        $ukmProfiles = Profil::wherenot('user_id',1)->get();
-        return view('landing-page.home', compact( 
+        $ukmProfiles = Profil::wherenot('user_id', 1)->get();
+        return view('landing-page.home', compact(
             'kegiatanHariIni',
             'kegiatanBulanIni',
             'kegiatanTahunIni',
@@ -44,7 +44,12 @@ class HomeController extends Controller
     }
     public function profilUkm($id)
     {
-        $ukm = Profil::with(['jadwal.dokumentasi', 'jadwal.tempats'])->where('user_id', $id)->first();
+        $ukm = Profil::with([
+            'jadwal.tempats',
+            'jadwal.dokumentasi' => function ($query) {
+                $query->where('status', 1);
+            }
+        ])->where('user_id', $id)->first();
         return view('landing-page.profil-ukm', compact('ukm'));
     }
 

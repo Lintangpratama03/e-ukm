@@ -15,6 +15,9 @@ class Dokumentasi extends Model
         'user_id',
         'jadwal_id',
         'foto',
+        'status',
+        'validated_by',
+        'validated_at',
         'deskripsi'
     ];
     public function jadwal()

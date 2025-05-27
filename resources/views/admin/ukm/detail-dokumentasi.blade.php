@@ -50,6 +50,15 @@
                                 <th>Tempat</th>
                                 <td>{{ $jadwal->tempats->pluck('nama_tempat')->implode(', ') }}</td>
                             </tr>
+                            <tr>
+                                <th>Total Foto</th>
+                                <td>
+                                    <span class="badge badge-warning">Pending:
+                                        {{ $jadwal->dokumentasi->where('status', 0)->count() }}</span>
+                                    <span class="badge badge-success ml-2">Validated:
+                                        {{ $jadwal->dokumentasi->where('status', 1)->count() }}</span>
+                                </td>
+                            </tr>
                         </table>
                     </div>
                 </div>
@@ -91,11 +100,14 @@
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-upload mr-1"></i> Upload Foto
                                 </button>
+                                <small class="form-text text-muted mt-2">
+                                    <i class="fas fa-info-circle"></i> Foto yang diupload akan menunggu validasi dari admin
+                                </small>
                             </form>
                         </div>
                     </div>
                 @endif
-                <!-- Tabel Dokumentasi -->
+
                 <div class="card">
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary">Daftar Foto Kegiatan</h6>
@@ -108,9 +120,10 @@
                                         <tr>
                                             <th width="5%">No</th>
                                             <th width="15%">Tanggal Upload</th>
-                                            <th width="30%">Foto</th>
+                                            <th width="25%">Foto</th>
                                             <th>Deskripsi</th>
-                                            <th width="10%">Aksi</th>
+                                            <th width="10%">Status</th>
+                                            <th width="15%">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -128,10 +141,64 @@
                                                 </td>
                                                 <td>{{ $item->deskripsi ?: '-' }}</td>
                                                 <td>
-                                                    <button type="button" class="btn btn-sm btn-danger delete-foto"
-                                                        data-id="{{ $item->id }}">
-                                                        <i class="dripicons-trash"></i>
-                                                    </button>
+                                                    @if ($item->status == 0)
+                                                        <span>
+                                                            Pending
+                                                        </span>
+                                                    @else
+                                                        <span>
+                                                            Validasi
+                                                        </span>
+                                                        @if ($item->validated_at)
+                                                            <br><small
+                                                                class="text-muted">{{ $item->validated_at }}</small>
+                                                        @endif
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if ($role == 'admin')
+                                                        @if ($item->status == 0)
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-success validate-foto"
+                                                                data-id="{{ $item->id }}" title="Validasi Foto">
+                                                                <i class="fas fa-check"></i>
+                                                            </button>
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-warning reject-foto"
+                                                                data-id="{{ $item->id }}" title="Tolak Foto">
+                                                                <i class="fas fa-times"></i>
+                                                            </button>
+                                                        @endif
+                                                        <button type="button" class="btn btn-sm btn-danger delete-foto"
+                                                            data-id="{{ $item->id }}" title="Hapus Foto">
+                                                            <i class="dripicons-trash"></i>
+                                                        </button>
+                                                    @else
+                                                        @if ($item->user_id == Auth::id() && $item->status == 0)
+                                                            <button type="button" class="btn btn-sm btn-danger delete-foto"
+                                                                data-id="{{ $item->id }}" title="Hapus Foto">
+                                                                <i class="dripicons-trash"></i>
+                                                            </button>
+                                                        @else
+                                                            <span class="text-muted">-</span>
+                                                        @endif
+                                                    @endif
+
+
+                                                    <form id="validate-form-{{ $item->id }}"
+                                                        action="{{ route('dokumentasi.validate', $item->id) }}"
+                                                        method="POST" class="d-none">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                    </form>
+
+                                                    <form id="reject-form-{{ $item->id }}"
+                                                        action="{{ route('dokumentasi.reject', $item->id) }}"
+                                                        method="POST" class="d-none">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                    </form>
+
                                                     <form id="delete-form-{{ $item->id }}"
                                                         action="{{ route('dokumentasi.destroy', $item->id) }}"
                                                         method="POST" class="d-none">
@@ -176,6 +243,47 @@
                 }
             });
 
+            // Validate foto
+            $('.validate-foto').on('click', function() {
+                const id = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Konfirmasi Validasi',
+                    text: "Apakah Anda yakin ingin memvalidasi foto ini?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Validasi!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('validate-form-' + id).submit();
+                    }
+                });
+            });
+
+            // Reject foto
+            $('.reject-foto').on('click', function() {
+                const id = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Konfirmasi Tolak',
+                    text: "Apakah Anda yakin ingin menolak dan menghapus foto ini?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ffc107',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Tolak!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('reject-form-' + id).submit();
+                    }
+                });
+            });
+
+            // Delete foto
             $('.delete-foto').on('click', function() {
                 const id = $(this).data('id');
 
