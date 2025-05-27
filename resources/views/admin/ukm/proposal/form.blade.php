@@ -661,7 +661,47 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6>Daftar Alat</h6>
+                            <button type="button" class="btn btn-sm btn-primary" id="addAlat">Tambah Alat</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-3">
+                                <label>Judul Alat</label>
+                                <input type="text" name="judul_alat" class="form-control" required value=""
+                                    placeholder="Daftar Alat yang Dibutuhkan">
+                            </div>
 
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <label class="form-label"><strong>Nama Alat</strong></label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label"><strong>Jumlah</strong></label>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label"><strong>Aksi</strong></label>
+                                </div>
+                            </div>
+
+                            <div id="alatContainer">
+                                <div class="row mb-2 alat-row">
+                                    <div class="col-md-6">
+                                        <input type="text" name="alat_nama[]" class="form-control"
+                                            placeholder="Proyektor">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="number" name="alat_jumlah[]" class="form-control" placeholder="2"
+                                            min="1">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-sm btn-danger removeAlat">Hapus</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Submit Button -->
                     <div class="text-end">
                         <button type="submit" class="btn btn-primary">Simpan Proposal</button>
@@ -755,7 +795,31 @@
                     e.target.closest('.acara-row').remove();
                 }
             });
+            // JavaScript untuk menambah alat
+            document.getElementById('addAlat').addEventListener('click', function() {
+                const container = document.getElementById('alatContainer');
+                const newRow = document.createElement('div');
+                newRow.className = 'row mb-2 alat-row';
+                newRow.innerHTML = `
+        <div class="col-md-6">
+            <input type="text" name="alat_nama[]" class="form-control" placeholder="Proyektor">
+        </div>
+        <div class="col-md-4">
+            <input type="number" name="alat_jumlah[]" class="form-control" placeholder="2" min="1">
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-sm btn-danger removeAlat">Hapus</button>
+        </div>
+    `;
+                container.appendChild(newRow);
+            });
 
+            // JavaScript untuk menghapus alat
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('removeAlat')) {
+                    e.target.closest('.alat-row').remove();
+                }
+            });
             // Tambah Anggaran
             document.getElementById('addAnggaran').addEventListener('click', function() {
                 const container = document.getElementById('anggaranContainer');

@@ -410,6 +410,27 @@
                     @endforeach
                 </tbody>
             </table>
+            <h3>Lampiran 3. Daftar Alat</h3>
+            <p style="text-align: center; font-weight: bold;">Daftar Alat</p>
+
+            <table class="committee-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Alat</th>
+                        <th>Jumlah</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($proposal->daftar_alat as $alat)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $alat['nama'] }}</td>
+                            <td>{{ $alat['jumlah'] }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
 </body>

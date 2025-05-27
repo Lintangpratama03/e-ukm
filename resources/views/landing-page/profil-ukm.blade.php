@@ -1,6 +1,6 @@
 @extends('layouts.landing-page.main')
 @php
-    $headerTitle = 'PROFIL UKM';
+    $headerTitle = 'PROFIL ORGANISASI';
     $headerDescription = '';
 @endphp
 <style>

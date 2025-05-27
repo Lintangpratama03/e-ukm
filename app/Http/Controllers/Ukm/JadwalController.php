@@ -271,8 +271,6 @@ class JadwalController extends Controller
     {
         // dd(1);
         $jadwal = Jadwal::findOrFail($id);
-
-
         $dasar_kegiatan = array_filter(explode("\n", $request->dasar_kegiatan));
         $metode_pelaksanaan = array_filter(explode("\n", $request->metode_pelaksanaan));
         $tahapan_pelaksanaan = array_filter(explode("\n", $request->tahapan_pelaksanaan));
@@ -345,6 +343,18 @@ class JadwalController extends Controller
             }
         }
 
+        $daftar_alat = [];
+        if ($request->has('alat_nama')) {
+            foreach ($request->alat_nama as $key => $nama) {
+                if (!empty($nama)) {
+                    $daftar_alat[] = [
+                        'nama' => $nama,
+                        'jumlah' => (int)($request->alat_jumlah[$key] ?? 0)
+                    ];
+                }
+            }
+        }
+
         $bulan_headers = array_map('trim', explode(',', $request->bulan_headers));
         $jadwal_kegiatan = [];
         if ($request->has('jadwal_nama')) {
@@ -386,7 +396,9 @@ class JadwalController extends Controller
             'anggaran_belanja' => $anggaran_belanja,
             'total_anggaran' => str_replace('.', '', $request->total_anggaran),
             'judul_kepanitiaan' => $request->judul_kepanitiaan,
-            'susunan_kepanitiaan' => $susunan_kepanitiaan
+            'susunan_kepanitiaan' => $susunan_kepanitiaan,
+            'judul_alat' => $request->judul_alat, 
+            'daftar_alat' => $daftar_alat
         ];
 
         $proposal = Proposal::updateOrCreate(

@@ -24,7 +24,18 @@
                         Dashboard
                     </a>
                 </li>
-
+                @php
+                    $bemList = App\Models\Profil::where('user_id', 1)->get();
+                @endphp
+                @foreach ($bemList as $bem)
+                    <li class="nav-item dropdown dropdown-hover mx-2">
+                        <a class="nav-link ps-2 d-flex cursor-pointer align-items-center font-weight-semibold"
+                            href="{{ route('home.profil-ukm', $bem->user_id) }}">
+                            <i class="material-symbols-rounded opacity-6 me-2 text-md">home</i>
+                            BEM
+                        </a>
+                    </li>
+                @endforeach
                 <li class="nav-item dropdown dropdown-hover mx-2">
                     <a class="nav-link ps-2 d-flex cursor-pointer align-items-center font-weight-semibold"
                         id="dropdownMenuUkm" data-bs-toggle="dropdown" aria-expanded="false">
@@ -41,7 +52,7 @@
                                 </h6>
                             </li>
                             @php
-                                $ukmList = App\Models\Profil::all();
+                                $ukmList = App\Models\Profil::wherenot('user_id', 1)->get();
                             @endphp
 
                             @foreach ($ukmList as $ukm)

@@ -31,9 +31,10 @@ class HomeController extends Controller
         $events = Jadwal::with('tempats', 'ukm')
             ->where('status_validasi', 'divalidasi')
             ->where('tanggal_mulai', '>=', now())
+            ->orderBy('tanggal_mulai', 'asc')
             ->get();
-        $ukmProfiles = Profil::all();
-        return view('landing-page.home', compact(
+        $ukmProfiles = Profil::wherenot('user_id',1)->get();
+        return view('landing-page.home', compact( 
             'kegiatanHariIni',
             'kegiatanBulanIni',
             'kegiatanTahunIni',

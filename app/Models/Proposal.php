@@ -37,6 +37,8 @@ class Proposal extends Model
         'total_anggaran',
         'judul_kepanitiaan',
         'susunan_kepanitiaan',
+        'daftar_alat',
+        'judul_alat'
     ];
 
     protected $casts = [
@@ -50,6 +52,7 @@ class Proposal extends Model
         'susunan_acara' => 'array',
         'anggaran_belanja' => 'array',
         'susunan_kepanitiaan' => 'array',
+        'daftar_alat' => 'array',
         'jumlah_dana' => 'decimal:2',
         'total_anggaran' => 'decimal:2',
     ];
