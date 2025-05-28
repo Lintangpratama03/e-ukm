@@ -25,7 +25,7 @@ class JadwalController extends Controller
 
     public function getData()
     {
-        $jadwal = Jadwal::with('tempats')->where('user_id', Auth::id())->orderBy('created_at', 'asc')->get();
+        $jadwal = Jadwal::with('tempats')->where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
         return DataTables::of($jadwal)
             ->addIndexColumn()
             ->addColumn('waktu', function ($row) {
