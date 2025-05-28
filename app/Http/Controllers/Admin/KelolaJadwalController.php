@@ -24,7 +24,7 @@ class KelolaJadwalController extends Controller
 
     public function getData()
     {
-        $jadwal = Jadwal::with('tempats')->get();
+        $jadwal = Jadwal::with('tempats')->orderBy('created_at', 'asc')->get();
         return DataTables::of($jadwal)
             ->addIndexColumn()
             ->addColumn('waktu', function ($row) {
